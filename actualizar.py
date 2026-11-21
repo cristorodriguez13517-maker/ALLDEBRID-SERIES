@@ -30,9 +30,55 @@ session.headers.update(HEADERS)
 
 CATALOG_MODE = "series"  # all, peliculas, series o kids
 
-def es_animacion(ficha):
-    generos = ficha.get("genres", []) if isinstance(ficha, dict) else []
-    return any(normalizar(g if isinstance(g, str) else g.get("name", "")) in ("animacion", "animation") for g in generos)
+def es_animacion(ficha, tipo=None):
+    if not isinstance(ficha, dict):
+        return None
+
+    generos = ficha.get("genres", [])
+    if not isinstance(generos, list):
+        generos = []
+
+    # Si una ficha antigua no guardo sus generos, recuperarlos de TMDB
+    # usando su ID. Si no hay datos verificables, no se clasifica a ciegas.
+    if not generos and tipo:
+        tmdb_id = ficha.get("tmdb_id") or ficha.get("id")
+        if tmdb_id:
+            detalles = tmdb_get(f"/{tipo}/{tmdb_id}")
+            generos = [
+                x.get("name", "")
+                for x in detalles.get("genres", [])
+                if isinstance(x, dict)
+            ]
+            ficha["genres"] = generos
+
+    if not generos:
+        return None
+
+    return any(
+        normalizar(g if isinstance(g, str) else g.get("name", ""))
+        in ("animacion", "animation")
+        for g in generos
+        if isinstance(g, (str, dict))
+    )
+
+
+def pertenece_catalogo(ficha, tipo):
+    animacion = es_animacion(ficha, tipo)
+
+    # Ante una ficha sin genero verificable, se excluye para evitar mezclas.
+    if animacion is None:
+        return False
+
+    if CATALOG_MODE == "kids":
+        return animacion
+
+    if CATALOG_MODE == "series" and tipo == "tv":
+        return not animacion
+
+    if CATALOG_MODE == "peliculas" and tipo == "movie":
+        return not animacion
+
+    return False
 
 ALIAS_TITULOS = {
     "84114.V1N1": "Vinicius",
@@ -1254,6 +1300,40 @@ def main():
     if not isinstance(episodios, dict):
         raise Exception("episodios.json no tiene formato valido")
 
+    # Limpiar tambien los catalogos antiguos, no solo las novedades.
+    if CATALOG_MODE == "series":
+        peliculas = []
+        series = [
+            x for x in series
+            if isinstance(x, dict) and pertenece_catalogo(x, "tv")
+        ]
+    elif CATALOG_MODE == "peliculas":
+        peliculas = [
+            x for x in peliculas
+            if isinstance(x, dict) and pertenece_catalogo(x, "movie")
+        ]
+        series = []
+    else:  # kids: peliculas y series, ambas exclusivamente de animacion
+        peliculas = [
+            x for x in peliculas
+            if isinstance(x, dict) and pertenece_catalogo(x, "movie")
+        ]
+        series = [
+            x for x in series
+            if isinstance(x, dict) and pertenece_catalogo(x, "tv")
+        ]
+
+    ids_series_validas = {
+        str(x.get("id") or x.get("tmdb_id"))
+        for x in series
+        if x.get("id") is not None or x.get("tmdb_id") is not None
+    }
+    episodios = {
+        str(tmdb_id): lista
+        for tmdb_id, lista in episodios.items()
+        if str(tmdb_id) in ids_series_validas and isinstance(lista, list)
+    }
+
     reparar_peliculas_existentes(peliculas)
 
     peliculas_por_clave = {}
@@ -1437,6 +1517,10 @@ def main():
                     if not info:
                         continue
 
+                    # Clasificar antes de añadir la serie al JSON.
+                    if not pertenece_catalogo(info, "tv"):
+                        continue
+
                     tmdb_id = str(info["id"])
 
                     if tmdb_id in series_por_id:
@@ -1444,6 +1528,8 @@ def main():
 
                         if not serie_existente.get("added_at"):
                             serie_existente["added_at"] = added_at
+                        if not serie_existente.get("genres"):
+                            serie_existente["genres"] = info.get("genres", [])
 
                         series_cache[clave_serie] = serie_existente
 
@@ -1462,10 +1548,7 @@ def main():
 
                 info_serie = series_cache[clave_serie]
 
-                animacion = es_animacion(info_serie)
-                if CATALOG_MODE == "kids" and not animacion:
-                    continue
-                if CATALOG_MODE == "series" and animacion:
+                if not pertenece_catalogo(info_serie, "tv"):
                     continue
 
                 tmdb_id = str(info_serie["id"])
@@ -1598,10 +1681,7 @@ def main():
                     continue
 
                 if pelicula:
-                    animacion = es_animacion(pelicula)
-                    if CATALOG_MODE == "kids" and not animacion:
-                        continue
-                    if CATALOG_MODE == "peliculas" and animacion:
+                    if not pertenece_catalogo(pelicula, "movie"):
                         continue
                     nuevas_peliculas_lista.append(pelicula)
 
