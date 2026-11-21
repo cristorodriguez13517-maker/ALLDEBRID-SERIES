@@ -1528,8 +1528,8 @@ def main():
 
                         if not serie_existente.get("added_at"):
                             serie_existente["added_at"] = added_at
-                        if not serie_existente.get("genres"):
-                            serie_existente["genres"] = info.get("genres", [])
+                        # Usar siempre la clasificación recién confirmada en TMDB.
+                        serie_existente["genres"] = info.get("genres", [])
 
                         series_cache[clave_serie] = serie_existente
 
