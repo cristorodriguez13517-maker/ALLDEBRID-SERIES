@@ -595,7 +595,7 @@ function renderSeries(){
         img.alt='';
         img.loading='lazy';
         img.draggable=false;
-        img.src=posterOf(serie);
+        img.src=posterOf(serie).replace(/(image\\.tmdb\\.org\\/t\\/p\\/)w780\\//,'$1w500/');
         img.onerror=()=>img.style.visibility='hidden';
 
         card.appendChild(img);
