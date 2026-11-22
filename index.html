@@ -595,7 +595,7 @@ function renderSeries(){
         img.alt='';
         img.loading='lazy';
         img.draggable=false;
-        img.src=posterOf(serie).replace('/w780/','/w500/');
+        img.src=posterOf(serie).replace(/\/t\/p\/(?:w\d+|original)\//, '/t/p/w342/');
         img.onerror=()=>img.style.visibility='hidden';
 
         card.appendChild(img);
