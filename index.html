@@ -398,31 +398,7 @@ async function obtenerTokenTurnstile(){
     return await precalentarTokenTurnstile() || await generarTokenTurnstile();
 }
 
-// Adelanta la verificación al cargar y también cuando el usuario vuelve a la página.
-function iniciarPreparacionTurnstile(){
-    if(!document.hidden) precalentarTokenTurnstile();
-}
-iniciarPreparacionTurnstile();
-document.addEventListener('visibilitychange',()=>{
-    if(!document.hidden){
-        if(tokenTurnstileCache && Date.now()-tokenTurnstileAt >= TOKEN_TURNSTILE_RENEW_AFTER){
-            tokenTurnstileCache='';
-            tokenTurnstileAt=0;
-        }
-        iniciarPreparacionTurnstile();
-    }
-});
-// Renueva el token antes de que se acerque a su caducidad.
-setInterval(()=>{
-    if(document.hidden) return;
-    if(tokenTurnstileCache && Date.now()-tokenTurnstileAt >= TOKEN_TURNSTILE_RENEW_AFTER){
-        tokenTurnstileCache='';
-        tokenTurnstileAt=0;
-    }
-    if(!tokenTurnstileCache && !tokenTurnstilePromise) precalentarTokenTurnstile();
-},30000);
-// Reintenta si Turnstile aún estaba inicializándose al cargar.
-setTimeout(()=>{if(!tokenTurnstileCache && !tokenTurnstilePromise) precalentarTokenTurnstile();},1800);
+// Turnstile se solicita únicamente al reproducir o al iniciar una acción explícita.
 
 async function reproducirConWorker(tipo,registro){
     if(reproduccionEnCurso) return;
@@ -443,8 +419,7 @@ async function reproducirConWorker(tipo,registro){
         reproduccionEnCurso=false;
         statusEl.hidden=true;
         if(window.turnstile&&turnstileWidgetId!==null)window.turnstile.reset(turnstileWidgetId);
-        setTimeout(()=>precalentarTokenTurnstile(),700);
-    }
+        }
 }
 
 
