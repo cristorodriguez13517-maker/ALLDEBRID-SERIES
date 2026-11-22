@@ -498,6 +498,8 @@ const seriesId=new URLSearchParams(location.search).get('id');
 
 let seriesList=[];
 let selectedSeries=null;
+let sharkVisibleSeries=null;
+let sharkLastFocusedSeriesRow=-1;
 
 let seasonRows=[];
 let episodesBySeason=[];
@@ -505,6 +507,7 @@ let episodeRecords=[];
 let currentSeasonIndex=0;
 let currentEpisodeIndex=0;
 let selectedEpisodeItem=null;
+let sharkEpisodeInfoTimer=0;
 
 /* LEER JSON */
 
@@ -705,7 +708,10 @@ function openSeries(id){
 }
 
 function visibleSeries(){
-    return [...grid.querySelectorAll('.movie:not([hidden])')];
+    if(sharkVisibleSeries===null){
+        sharkVisibleSeries=Array.from(grid.querySelectorAll('.movie:not([hidden])'));
+    }
+    return sharkVisibleSeries;
 }
 
 function gridColumns(){
@@ -715,13 +721,17 @@ function gridColumns(){
 }
 
 function focusSeries(card){
-    if(!card)return;
+    if(!card || card.hidden)return;
+    const index=visibleSeries().indexOf(card);
+    const row=index<0?-1:Math.floor(index/gridColumns());
     card.focus({preventScroll:true});
     selectSeries(card);
-
-    const r=card.getBoundingClientRect();
-    if(r.top<325)scrollBy({top:r.top-325,left:0,behavior:'instant'});
-    else if(r.bottom>innerHeight-12)scrollBy({top:r.bottom-innerHeight+12,left:0,behavior:'instant'});
+    if(row!==sharkLastFocusedSeriesRow){
+        sharkLastFocusedSeriesRow=row;
+        const r=card.getBoundingClientRect();
+        if(r.top<325)scrollBy({top:r.top-325,left:0,behavior:'instant'});
+        else if(r.bottom>innerHeight-12)scrollBy({top:r.bottom-innerHeight+12,left:0,behavior:'instant'});
+    }
 }
 
 function firstSeries(){
@@ -895,7 +905,12 @@ function updateSelected(){
     const item=(episodesBySeason[currentSeasonIndex]||[])[currentEpisodeIndex];
     const ep=(episodeRecords[currentSeasonIndex]||[])[currentEpisodeIndex];
 
-    if(ep)actualizarFicha(ep);
+    clearTimeout(sharkEpisodeInfoTimer);
+    if(ep){
+        sharkEpisodeInfoTimer=setTimeout(()=>{
+            if((episodeRecords[currentSeasonIndex]||[])[currentEpisodeIndex]===ep)actualizarFicha(ep);
+        },90);
+    }
 
     if(item){
         if(selectedEpisodeItem!==item){
