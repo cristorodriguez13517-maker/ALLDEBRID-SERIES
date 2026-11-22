@@ -757,6 +757,10 @@ function filterSeries(){
         if(!card.hidden&&!first)first=card;
     });
 
+    // Mantener la lista de navegación sincronizada con el filtro.
+    sharkVisibleSeries=Array.from(grid.querySelectorAll('.movie:not([hidden])'));
+    sharkLastFocusedSeriesRow=-1;
+
     if(first)selectSeries(first);
 }
 
