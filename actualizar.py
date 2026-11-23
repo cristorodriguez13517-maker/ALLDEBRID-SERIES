@@ -1140,14 +1140,16 @@ def obtener_datos_episodio(tmdb_id, temporada, episodio):
             "imagen": imagen(
                 datos.get("still_path"),
                 "w500"
-            )
+            ),
+            "duracion": datos.get("runtime") or 0
         }
 
     except Exception:
         return {
             "titulo": f"Episodio {episodio}",
             "sinopsis": "",
-            "imagen": ""
+            "imagen": "",
+            "duracion": 0
         }
 
 
@@ -1415,6 +1417,22 @@ def main():
         if str(tmdb_id) in ids_series_validas and isinstance(lista, list)
     }
 
+    # Completar la duración TMDB de episodios que ya estaban guardados.
+    if TMDB_API_KEY and CATALOG_MODE == "series":
+        for tmdb_id, lista in episodios.items():
+            for episodio in lista:
+                if episodio.get("duracion") or episodio.get("runtime"):
+                    continue
+                temporada = episodio.get("temporada")
+                numero = episodio.get("numero")
+                if not temporada or not numero:
+                    continue
+                datos_tmdb = obtener_datos_episodio(tmdb_id, temporada, numero)
+                duracion = datos_tmdb.get("duracion", 0)
+                if duracion:
+                    episodio["duracion"] = duracion
+                    print(f"Duración TMDB añadida: {tmdb_id} T{temporada}E{numero} ({duracion} min)")
+
     reparar_peliculas_existentes(peliculas)
 
     peliculas_por_clave = {}
@@ -1674,6 +1692,7 @@ def main():
                     "titulo": datos_tmdb["titulo"],
                     "sinopsis": datos_tmdb["sinopsis"],
                     "imagen": datos_tmdb["imagen"],
+                    "duracion": datos_tmdb.get("duracion", 0),
                     "magnet_id": str(magnet_id),
                     "file_path": archivo["path"],
                     "url": url_directa,
