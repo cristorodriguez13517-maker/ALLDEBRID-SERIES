@@ -718,28 +718,35 @@ function firstSeries(){
 }
 
 function filterSeries(){
-    const q=searchInput.value.trim().toLocaleLowerCase('es');
-    let first=null;
+    const q = searchInput.value.trim().toLocaleLowerCase('es');
+    let first = null;
 
-    document.querySelectorAll('#series-grid .movie').forEach(card=>{
-        const text=[
+    const cards = document.querySelectorAll('#series-grid .movie');
+    cards.forEach(card => {
+        const text = [
             card.dataset.title,
             card.dataset.year,
             card.dataset.genres,
             card.dataset.quality,
             card.dataset.age,
-            card.dataset.overview
+            card.dataset.overview,
+            card.dataset.kind
         ].join(' ').toLocaleLowerCase('es');
 
-        card.hidden=!text.includes(q);
-        if(!card.hidden&&!first)first=card;
+        card.hidden = !text.includes(q);
+        if (!card.hidden && !first) first = card;
     });
 
-    // Mantener la lista de navegación sincronizada con el filtro.
-    sharkVisibleSeries=Array.from(grid.querySelectorAll('.movie:not([hidden])'));
-    sharkLastFocusedSeriesRow=-1;
+    sharkVisibleSeries = Array.from(grid.querySelectorAll('.movie:not([hidden])'));
+    sharkLastFocusedSeriesRow = -1;
 
-    if(first)selectSeries(first);
+    if (first) {
+        selectSeries(first);
+    } else if (q) {
+        selectedSeries = null;
+        info.classList.remove('visible');
+        header.style.backgroundImage = 'none';
+    }
 }
 
 /* PREPARAR EPISODIOS Y TEMPORADAS */
