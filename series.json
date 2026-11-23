@@ -5,7 +5,7 @@
     "title": "Los altruistas",
     "poster": "https://image.tmdb.org/t/p/w500/iRFLTlydFocAEWN2yIoBWGTXyFe.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/m8JTMj7jDMJFZAPP1ASmSi4gMWi.jpg",
-    "logo": "https://image.tmdb.org/t/p/w780/7BCVDv3HYjI4BLI3yNv2sPHONUy.png",
+    "logo": "https://image.tmdb.org/t/p/w780/8Te3PSbefzDQlgjUfcVsHgzx2xn.png",
     "overview": "Jóvenes, idealistas y, de repente, multimillonarios. Intentaron hacer el bien, pero sacaron lo peor el uno del otro. Una historia de amor tóxico inspirada en un fraude real.",
     "first_air_date": "2026-11-19",
     "genres": [
@@ -15,7 +15,8 @@
     "age_rating": "12+",
     "number_of_seasons": 1,
     "quality": "",
-    "added_at": "2026-11-20T21:30:17+00:00"
+    "added_at": "2026-11-20T21:30:17+00:00",
+    "logo_selection_version": 3
   },
   {
     "id": 70785,
@@ -23,7 +24,7 @@
     "title": "Anne with an E",
     "poster": "https://image.tmdb.org/t/p/w500/6P6tXhjT5tK3qOXzxF9OMLlG7iz.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/70YdbMELM4b8x8VXjlubymb2bQ0.jpg",
-    "logo": "https://image.tmdb.org/t/p/w780/gtqNjjM2wXmTnbTvMP3xYAXaLrU.png",
+    "logo": "",
     "overview": "Anne Shirley es una niña huérfana que vive en un pequeño pueblo llamado Avonlea que pertenece a la Isla del Príncipe Eduardo, en el año 1890. Después de una infancia difícil, donde fue pasando de orfanato a hogares de acogida, es enviada por error a vivir con una solterona y su hermano. Cuando cumple 13 años, Anne va a conseguir transformar su vida y el pequeño pueblo donde vive gracias a su fuerte personalidad, intelecto e imaginación.",
     "first_air_date": "2017-03-19",
     "genres": [
@@ -33,7 +34,8 @@
     "age_rating": "12+",
     "number_of_seasons": 3,
     "quality": "",
-    "added_at": "2026-11-18T17:25:18+00:00"
+    "added_at": "2026-11-18T17:25:18+00:00",
+    "logo_selection_version": 3
   },
   {
     "id": 291507,
@@ -51,7 +53,8 @@
     "age_rating": "16+",
     "number_of_seasons": 1,
     "quality": "",
-    "added_at": "2026-11-17T15:31:43+00:00"
+    "added_at": "2026-11-17T15:31:43+00:00",
+    "logo_selection_version": 3
   },
   {
     "id": 339697,
@@ -68,6 +71,7 @@
     "age_rating": "",
     "number_of_seasons": 1,
     "quality": "",
-    "added_at": "2026-11-07T01:16:10+00:00"
+    "added_at": "2026-11-07T01:16:10+00:00",
+    "logo_selection_version": 3
   }
 ]
