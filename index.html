@@ -1037,6 +1037,12 @@ function closeSearch(){
 searchButton.addEventListener('click',openSearch);
 searchInput.addEventListener('input',filterSeries);
 
+searchInput.addEventListener('blur', () => {
+    if (!searchInput.value.trim()) {
+        searchInput.classList.remove('active');
+    }
+});
+
 /* MANDO ANDROID TV */
 
 document.addEventListener('keydown',event=>{
