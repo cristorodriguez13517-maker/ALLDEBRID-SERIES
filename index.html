@@ -626,6 +626,54 @@ function renderSeries(){
     filterSeries();
 }
 
+
+/* BUSCADOR: ignora tildes y busca por título, año, género y detalles */
+function normalizarBusqueda(valor){
+    return String(valor || '')
+        .normalize('NFD')
+        .replace(/[\\u0300-\\u036f]/g,'')
+        .toLocaleLowerCase('es')
+        .trim();
+}
+
+function filterSeries(){
+    const query=normalizarBusqueda(searchInput.value);
+    const cards=[...grid.querySelectorAll('.movie')];
+    let firstMatch=null;
+
+    cards.forEach(card=>{
+        const searchableText=normalizarBusqueda([
+            card.dataset.title,
+            card.dataset.year,
+            card.dataset.genres,
+            card.dataset.quality,
+            card.dataset.age,
+            card.dataset.overview,
+            card.dataset.id
+        ].join(' '));
+        const matches=!query||searchableText.includes(query);
+        card.hidden=!matches;
+        if(matches&&!firstMatch)firstMatch=card;
+    });
+
+    sharkVisibleSeries=cards.filter(card=>!card.hidden);
+    sharkLastFocusedSeriesRow=-1;
+
+    if(firstMatch){
+        statusEl.hidden=true;
+        selectSeries(firstMatch);
+    }else if(query){
+        selectedSeries=null;
+        if(headerInfo)headerInfo.replaceChildren();
+        header.style.backgroundImage='none';
+        statusEl.hidden=false;
+        statusEl.textContent='No se han encontrado series.';
+    }else{
+        statusEl.hidden=cards.length===0;
+        if(cards.length===0)statusEl.textContent='Todavía no hay series disponibles.';
+    }
+}
+
 function selectSeries(card){
     if(!card || card.hidden)return;
     if(selectedSeries!==card){
