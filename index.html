@@ -641,9 +641,10 @@ function filterSeries(){
     sharkVisibleSeries=cards.filter(card=>!card.hidden);
     sharkLastFocusedSeriesRow=-1;
 
+    if(selectedSeries)selectedSeries.classList.remove('selected');
+    selectedSeries=null;
     if(firstMatch){
         statusEl.hidden=true;
-        selectSeries(firstMatch);
     }else if(query){
         selectedSeries=null;
         if(headerInfo)headerInfo.replaceChildren();
@@ -1022,6 +1023,8 @@ async function loadSeriesDetail(){
 /* BUSCADOR */
 
 function openSearch(){
+    grid.querySelectorAll('.movie.selected').forEach(card=>card.classList.remove('selected'));
+    selectedSeries=null;
     searchInput.classList.add('active');
     searchInput.focus();
 }
