@@ -314,6 +314,22 @@ outline:none!important;box-shadow:none!important
 
 /* El filtrado del buscador debe prevalecer sobre los display:block!important de las tarjetas */
 .movie-row .movie[hidden]{display:none!important}
+
+ 
+ /* CARÁTULAS REDONDEADAS Y MARCO ROJO DE SELECCIÓN */
+ .movie-row .movie{
+   border-radius:12px!important;
+   overflow:hidden!important;
+ }
+ .movie-row .movie img{
+   box-sizing:border-box!important;
+   border-radius:12px!important;
+ }
+ .movie-row .movie.selected img,
+ .movie-row .movie:focus-visible img{
+   border-color:#e50914!important;
+ }
+ 
 </style>
 </head>
 
