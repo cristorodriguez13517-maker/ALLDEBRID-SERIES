@@ -54,6 +54,7 @@ border-radius:4px;background:transparent;text-decoration:none;
 outline:none!important;box-shadow:none!important
 }
 .episode-thumb img{width:100%;height:124px;object-fit:cover;display:block}
+.episode-duration{position:absolute;right:8px;bottom:8px;z-index:2;padding:4px 7px;border-radius:4px;background:rgba(0,0,0,.78);color:#fff;font-size:12px;font-weight:700;line-height:1;pointer-events:none;text-shadow:0 1px 2px #000}
 .episode-thumb.selected,.episode-thumb:focus{border-color:#e50914!important}
 .episode-thumb img.placeholder{object-fit:contain;background:#171717}
 .status{color:#aaa;padding:10px 0;font-size:14px}
@@ -855,6 +856,17 @@ function crearTemporada(temporada,index){
         }
 
         item.appendChild(img);
+
+        const duration=ep.duracion??ep.duration??ep.runtime??ep.duracion_minutos??null;
+        if(duration!==null&&duration!==undefined&&duration!==''){
+            const badge=document.createElement('span');
+            badge.className='episode-duration';
+            const minutes=Number(duration);
+            badge.textContent=Number.isFinite(minutes)&&minutes>0
+                ?(minutes>=60?Math.floor(minutes/60)+' h '+String(minutes%60).padStart(2,'0')+' min':Math.round(minutes)+' min')
+                :String(duration);
+            item.appendChild(badge);
+        }
 
         item.addEventListener('focus',()=>{
             currentSeasonIndex=index;
