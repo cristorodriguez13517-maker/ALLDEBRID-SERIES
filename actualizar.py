@@ -1758,7 +1758,7 @@ def main():
     # ======================================================
     for lista, tipo_tmdb in ((peliculas, "movie"), (series, "tv")):
         for ficha in lista:
-            if not isinstance(ficha, dict) or ficha.get("logo_selection_version") == 3:
+            if not isinstance(ficha, dict):
                 continue
             if ficha.get("manual_logo"):
                 ficha["logo_selection_version"] = 3
@@ -1767,8 +1767,7 @@ def main():
             if not tmdb_id:
                 continue
             logo_nuevo = buscar_logo(tipo_tmdb, tmdb_id)
-            if logo_nuevo:
-                ficha["logo"] = logo_nuevo
+            ficha["logo"] = logo_nuevo or ""
             ficha["logo_selection_version"] = 3
 
     # ======================================================
