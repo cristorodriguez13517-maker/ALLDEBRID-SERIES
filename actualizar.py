@@ -837,7 +837,7 @@ from PIL import Image
 def clasificar_logo_tmdb(logo):
     """Devuelve si el logo tiene color y su luminosidad media."""
     try:
-        url = IMAGE_BASE + "w185" + logo["file_path"]
+        url = IMAGE + "w185" + logo["file_path"]
         respuesta = requests.get(url, timeout=12)
         respuesta.raise_for_status()
         imagen_logo = Image.open(BytesIO(respuesta.content)).convert("RGBA")
