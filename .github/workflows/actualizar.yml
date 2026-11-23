@@ -21,7 +21,7 @@ jobs:
       - name: Comprobar sintaxis de Python
         run: python -m py_compile actualizar.py
       - name: Instalar dependencias
-        run: pip install requests
+        run: pip install requests pillow
       - name: Actualizar catalogo
         env:
           ALLDEBRID_API_KEY: ${{ secrets.ALLDEBRID_API_KEY }}
