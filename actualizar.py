@@ -918,7 +918,7 @@ def elegir_logo_tmdb(logos):
 
 def buscar_logo(tipo, tmdb_id):
     try:
-        datos = tmdb_get(f"/{tipo}/{tmdb_id}/images")
+        datos = tmdb_get(f"/{tipo}/{tmdb_id}/images", {"include_image_language": "es,en,null"})
         elegido = elegir_logo_tmdb(datos.get("logos", []))
         return (elegido.get("_logo_url") or imagen(elegido.get("file_path"), "w780")) if elegido else ""
     except Exception:
