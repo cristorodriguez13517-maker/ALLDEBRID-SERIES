@@ -1798,7 +1798,7 @@ def main():
             if not tmdb_id:
                 continue
             logo_nuevo = buscar_logo(tipo_tmdb, tmdb_id)
-            ficha["logo"] = logo_nuevo or ""
+            ficha["logo"] = logo_nuevo or ficha.get("logo") or ""
             ficha["logo_selection_version"] = 3
 
     # ======================================================
