@@ -1742,6 +1742,24 @@ def main():
             )
 
     # ======================================================
+    # RENOVAR LOGOS EXISTENTES UNA SOLA VEZ
+    # ======================================================
+    for lista, tipo_tmdb in ((peliculas, "movie"), (series, "tv")):
+        for ficha in lista:
+            if not isinstance(ficha, dict) or ficha.get("logo_selection_version") == 2:
+                continue
+            if ficha.get("manual_logo"):
+                ficha["logo_selection_version"] = 2
+                continue
+            tmdb_id = ficha.get("tmdb_id")
+            if not tmdb_id:
+                continue
+            logo_nuevo = buscar_logo(tipo_tmdb, tmdb_id)
+            if logo_nuevo:
+                ficha["logo"] = logo_nuevo
+            ficha["logo_selection_version"] = 2
+
+    # ======================================================
     # GUARDAR CATALOGOS
     # ======================================================
 
