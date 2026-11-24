@@ -1050,7 +1050,7 @@ function updateSelected(){
 
 function mostrarTemporada(index){
     if(index<0||index>=seasonRows.length)return;
-    const showAllOnPhone=window.matchMedia('(max-width:600px) and (orientation:portrait)').matches;
+    const showAllOnPhone=window.matchMedia('(orientation:portrait)').matches;
     seasonRows.forEach((row,i)=>{
         row.style.setProperty('display',showAllOnPhone?'block':(i===index?'block':'none'),'important');
         row.style.setProperty('visibility','visible','important');
@@ -1487,8 +1487,8 @@ iniciar();
 
 <style id="sharktv-mobile-show-all-seasons">
 /* En móvil vertical se muestran todas las temporadas, no solo la seleccionada */
-@media screen and (max-width:600px) and (orientation:portrait){
-  .season-row{display:block!important;visibility:visible!important;}
+@media screen and (orientation:portrait){
+  #series-container .season-row{display:block!important;visibility:visible!important;}
   .season-title{display:block!important;}
   .episodes-list{display:flex!important;visibility:visible!important;}
 }
