@@ -1266,7 +1266,10 @@ async function iniciar(){
         await loadSeriesDetail();
     }else{
         await loadSeries();
-        requestAnimationFrame(()=>requestAnimationFrame(()=>{firstSeries();const initialCard=document.activeElement&&document.activeElement.closest('.movie');if(initialCard)initialCard.classList.add('shark-no-initial-frame');}));
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{
+            const first=visibleSeries()[0];
+            if(first)renderSeriesHeader(first);
+        }));
     }
 }
 
