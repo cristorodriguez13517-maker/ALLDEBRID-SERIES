@@ -873,6 +873,8 @@ function focusSeries(card){
     selectSeries(card);
 }
 
+function selectFirstSearchResult(){const card=visibleSeries()[0];if(!card)return;searchInput.classList.remove('active');searchInput.blur();focusSeries(card);}
+
 function firstSeries(){
     const cards=visibleSeries();
     if(cards.length)focusSeries(cards[0]);
@@ -1209,7 +1211,7 @@ document.addEventListener('keydown',event=>{
                 searchButton.focus();
             }else if(down||enter){
                 event.preventDefault();
-                firstSeries();
+                selectFirstSearchResult();
             }
             return;
         }
