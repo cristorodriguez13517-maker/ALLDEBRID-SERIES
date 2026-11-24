@@ -807,6 +807,32 @@ function selectSeries(card){
     },320);
 }
 
+function appendVlcSourceIcon(target){
+    if(!target)return;
+    const ns='http://www.w3.org/2000/svg';
+    const icon=document.createElementNS(ns,'svg');
+    icon.setAttribute('viewBox','0 0 24 28');
+    icon.setAttribute('class','vlc-source-icon');
+    icon.setAttribute('role','img');
+    icon.setAttribute('aria-label','VLC');
+    const cone=document.createElementNS(ns,'path');
+    cone.setAttribute('d','M10 2h4l7 21H3L10 2z');
+    cone.setAttribute('fill','#f28c28');
+    const stripe1=document.createElementNS(ns,'path');
+    stripe1.setAttribute('d','M7.2 10.5h9.6l1.25 3.8H5.95z');
+    stripe1.setAttribute('fill','#fff');
+    const stripe2=document.createElementNS(ns,'path');
+    stripe2.setAttribute('d','M5 17h14l1.25 3.8H3.75z');
+    stripe2.setAttribute('fill','#fff');
+    const base=document.createElementNS(ns,'path');
+    base.setAttribute('d','M2 23h20v3H2z');
+    base.setAttribute('rx','1');
+    base.setAttribute('fill','#d8d8d8');
+    icon.append(cone,stripe1,stripe2,base);
+    target.append(' ');
+    target.appendChild(icon);
+}
+
 function renderSeriesHeader(card){
 header.style.backgroundImage=card.dataset.banner
         ?'url("'+card.dataset.banner+'")'
@@ -840,6 +866,7 @@ header.style.backgroundImage=card.dataset.banner
         card.dataset.quality,
         card.dataset.age
     ].filter(Boolean).join(' | ');
+    appendVlcSourceIcon(details);
     headerInfo.appendChild(details);
 
     const overview=document.createElement('p');
@@ -1775,5 +1802,17 @@ iniciar();
    linear-gradient(to right,rgba(0,0,0,.96) 0%,rgba(0,0,0,.70) 48%,transparent 100%),
    linear-gradient(to bottom,rgba(0,0,0,.22) 48%,rgba(0,0,0,.72) 74%,#000 100%)!important;
  }
+}
+</style>
+
+<style>
+/* Icono VLC junto a los datos del banner */
+.vlc-source-icon{
+  display:inline-block!important;
+  width:17px!important;
+  height:20px!important;
+  margin-left:3px!important;
+  vertical-align:-5px!important;
+  flex:none!important;
 }
 </style>
