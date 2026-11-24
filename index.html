@@ -387,6 +387,50 @@ outline:none!important;box-shadow:none!important
   }
 }
 </style>
+
+<style id="sharktv-alldebrid-mobile-portrait-layout-fix">
+/* Igualar el flujo móvil vertical: el banner acompaña al documento y el catálogo empieza inmediatamente debajo. */
+@media screen and (max-width:600px) and (orientation:portrait){
+  .header{
+    position:relative!important;
+    top:auto!important;left:auto!important;right:auto!important;
+    width:100%!important;height:430px!important;min-height:430px!important;
+    z-index:1!important;flex-shrink:0!important;
+  }
+  .header-info,#header-info{
+    position:absolute!important;
+    top:160px!important;left:15px!important;right:15px!important;
+    transform:translateY(-50%)!important;
+    max-height:calc(100% - 24px)!important;
+    box-sizing:border-box!important;
+  }
+  .content{
+    position:relative!important;z-index:2!important;
+    margin-top:0!important;padding:12px!important;
+    min-height:0!important;
+  }
+  .movie-row,#movie-row,#series-grid{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-auto-flow:row!important;grid-auto-rows:auto!important;
+    width:100%!important;height:auto!important;min-height:0!important;
+    max-height:none!important;overflow:visible!important;
+    align-content:start!important;align-items:start!important;
+    transform:none!important;margin-top:15px!important;
+    column-gap:8px!important;row-gap:14px!important;
+  }
+  .movie-row .movie{
+    position:relative!important;inset:auto!important;
+    width:100%!important;min-width:0!important;max-width:none!important;
+    height:auto!important;min-height:0!important;aspect-ratio:2/3!important;
+    margin:0!important;transform:none!important;
+  }
+  .movie-row .movie img{
+    display:block!important;width:100%!important;height:100%!important;
+    max-width:none!important;object-fit:cover!important;
+  }
+}
+</style>
 </head>
 
 <body>
