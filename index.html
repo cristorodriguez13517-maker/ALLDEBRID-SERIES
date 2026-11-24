@@ -1484,6 +1484,15 @@ iniciar();
  .movie-row .movie img{display:block!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover!important;}
 }
 </style>
+
+<style id="sharktv-mobile-show-all-seasons">
+/* En móvil vertical se muestran todas las temporadas, no solo la seleccionada */
+@media screen and (max-width:600px) and (orientation:portrait){
+  .season-row{display:block!important;visibility:visible!important;}
+  .season-title{display:block!important;}
+  .episodes-list{display:flex!important;visibility:visible!important;}
+}
+</style>
 </body>
 </html>
 
