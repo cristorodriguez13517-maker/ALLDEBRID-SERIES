@@ -729,14 +729,6 @@ function filterSeries(){
     }
 }
 
-function updatePassedCards(card){
-    const parent=card&&card.parentElement;
-    if(!parent)return;
-    const cards=Array.from(parent.children).filter(item=>item.classList&&item.classList.contains('movie')&&!item.hidden);
-    const current=cards.indexOf(card);
-    cards.forEach((item,index)=>item.classList.toggle('shark-passed',current>=0&&index<current));
-}
-
 function selectSeries(card){
     if(!card || card.hidden)return;
     if(selectedSeries!==card){
@@ -744,7 +736,7 @@ function selectSeries(card){
         selectedSeries=card;
         card.classList.add('selected');
     }
-    updatePassedCards(card);
+
     clearTimeout(window.__sharkHeaderUpdateTimer);
     window.__sharkHeaderUpdateTimer=setTimeout(()=>{
         if(selectedSeries===card)renderSeriesHeader(card);
@@ -812,16 +804,8 @@ function gridColumns(){
 
 function focusSeries(card){
     if(!card || card.hidden)return;
-    const index=visibleSeries().indexOf(card);
-    const row=index<0?-1:Math.floor(index/gridColumns());
     card.focus({preventScroll:true});
     selectSeries(card);
-    if(row!==sharkLastFocusedSeriesRow){
-        sharkLastFocusedSeriesRow=row;
-        const r=card.getBoundingClientRect();
-        if(r.top<325)scrollBy({top:r.top-325,left:0,behavior:'instant'});
-        else if(r.bottom>innerHeight-12)scrollBy({top:r.bottom-innerHeight+12,left:0,behavior:'instant'});
-    }
 }
 
 function firstSeries(){
@@ -1278,7 +1262,4 @@ iniciar();
 </style>
 <style>
 /* Las carátulas que quedan atrás se desvanecen; reaparecen al retroceder */
-.movie-row>.movie.shark-passed{opacity:0!important;transition:none!important}
-.movie-row>.movie:not(.shark-passed){opacity:1!important;transition:none!important}
-@media(prefers-reduced-motion:reduce){.movie-row>.movie{transition:none!important}}
 </style>
