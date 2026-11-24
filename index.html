@@ -824,6 +824,7 @@ function gridColumns(){
 
 function focusSeries(card){
     if(!card || card.hidden)return;
+    document.querySelectorAll('.shark-no-initial-frame').forEach(el=>el.classList.remove('shark-no-initial-frame'));
     card.focus({preventScroll:true});
     selectSeries(card);
 }
