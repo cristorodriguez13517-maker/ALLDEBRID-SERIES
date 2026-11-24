@@ -1283,7 +1283,7 @@ iniciar();
    return;
   }
   const synopsis=getSynopsis();if(!synopsis)return;
-  const boundary=synopsis.getBoundingClientRect().top,hideBefore=300;
+  const boundary=synopsis.getBoundingClientRect().top,hideBefore=100;
   cards.forEach(card=>{
    const visible=card.getBoundingClientRect().bottom>boundary+hideBefore?1:0;
    card.style.setProperty('transition','none');
