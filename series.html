@@ -478,6 +478,7 @@ async function reproducirConWorker(tipo,registro){
     reproduccionEnCurso=true;
     try{
         const url=await obtenerEnlaceDirecto(tipo,registro);
+        if(window.__sharkRecordWorker)window.__sharkRecordWorker(tipo,registro);
         abrirVLC(url);
     }catch(error){console.error('Error de reproducción:',error);alert(error.message||'No se pudo iniciar la reproducción.');}
     finally{
@@ -1308,5 +1309,37 @@ iniciar();
 })();
 </script>
 
+<script id="SHARKTV_CONTINUE_INTEGRATION_V1">
+(function(){
+ const KEY='sharktv_seguir_viendo_v1',REPO='ALLDEBRID-SERIES';
+ function read(){try{const a=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
+ function save(data){
+  try{
+   const list=read(),id=String(data.id||data.sourceUrl||data.title||Date.now());
+   const key=REPO+'|'+id;
+   const item={id:key,title:data.title||'Contenido',poster:data.poster||'',url:data.player==='SmartTube'?(data.sourceUrl||data.resumeUrl||''):(data.resumeUrl||''),sourceUrl:data.sourceUrl||'',player:data.player||'SmartTube',repo:REPO,kind:data.kind||'movie',percent:0,updatedAt:Date.now()};
+   const next=[item,...list.filter(x=>String(x.id)!==key)].slice(0,80);
+   localStorage.setItem(KEY,JSON.stringify(next));
+  }catch(e){console.warn('No se pudo guardar Seguir viendo:',e)}
+ }
+ window.SHARKTVContinue={save};
+ 
+ 
+ 
+ window.__sharkRecordWorker=function(tipo,registro){
+  const epTitle=document.querySelector('#episode-title,.episode-title');
+  const card=window.selectedMovie||window.selectedSeries||null;
+  const title=(registro&&(registro.title_manual||registro.title||registro.name||registro.titulo||registro.file_name||registro.filename))||(epTitle&&epTitle.textContent)||(card&&card.dataset&&card.dataset.title)||'Contenido AllDebrid';
+  const poster=(registro&&(registro.poster_manual||registro.poster||registro.imagen))||(card&&card.dataset&&card.dataset.poster)||'';
+  const seriesId=new URLSearchParams(location.search).get('id');
+  const isDetail=/series\.html$/i.test(location.pathname)&&!!seriesId;
+  const base=location.origin+'/ALLDEBRID-SERIES/';
+  const resume=isDetail?base+'series.html?id='+encodeURIComponent(seriesId):base;
+  const id=(registro&&(registro.tmdb_id||registro.id||registro.magnet_id))||title;
+  save({id:String(id)+'|'+String(registro&&registro.file_path||''),title,poster,sourceUrl:'',player:'VLC',kind:tipo||'movie',resumeUrl:resume});
+ };
+ 
+ })();
+</script>
 </body>
 </html>
