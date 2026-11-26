@@ -1367,6 +1367,8 @@ async function iniciar(){
         requestAnimationFrame(()=>requestAnimationFrame(()=>{
             const firstContent=visibleSeries().find(card=>card.dataset.type!=='shortcut');
             if(firstContent)renderSeriesHeader(firstContent);
+            header.style.backgroundImage = 'url("./contenido-series.svg")';
+            header.classList.add('has-banner');
         }));
     }
 }
