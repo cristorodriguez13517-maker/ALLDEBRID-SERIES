@@ -551,7 +551,7 @@ async function reproducirConWorker(tipo,registro){
         const response=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo,magnet_id:magnetId,file_path:filePath,token})});
         const result=await response.json().catch(()=>({}));
         if(!response.ok||!result.url) throw new Error(result.error||'No se pudo preparar la reproducción.');
-        if(window.__sharkRecordWorker)window.__sharkRecordWorker(tipo,registro);
+        if(window.__sharkRecordWorker)window.__sharkRecordWorker(tipo,registro,url);
         abrirVLC(result.url);
     }catch(error){console.error('Error de reproducción:',error);alert(error.message||'No se pudo iniciar la reproducción.');}
     finally{
@@ -1565,7 +1565,7 @@ iniciar();
  
  
  
- window.__sharkRecordWorker=function(tipo,registro){
+ window.__sharkRecordWorker=function(tipo,registro,streamUrl){
   const epTitle=document.querySelector('#episode-title,.episode-title');
   const card=(typeof selectedMovie!=='undefined'&&selectedMovie)||(typeof selectedSeries!=='undefined'&&selectedSeries)||window.selectedMovie||window.selectedSeries||null;
   const title=(registro&&(registro.title_manual||registro.title||registro.name||registro.titulo||registro.file_name||registro.filename))||(epTitle&&epTitle.textContent)||(card&&card.dataset&&card.dataset.title)||(registro&&registro.file_path)||'Contenido AllDebrid';
@@ -1575,7 +1575,7 @@ iniciar();
   const base=location.origin+'/ALLDEBRID-SERIES/';
   const resume=isDetail?base+'series.html?id='+encodeURIComponent(seriesId):base;
   const id=(registro&&(registro.tmdb_id||registro.id||registro.magnet_id))||title;
-  save({id:String(id)+'|'+String(registro&&registro.file_path||''),title,poster,sourceUrl:'',player:'VLC',kind:tipo||'movie',resumeUrl:resume});
+  save({id:String(id)+'|'+String(registro&&registro.file_path||''),title,poster,sourceUrl:streamUrl||'',player:'VLC',kind:tipo||'movie',resumeUrl:resume});
  };
  
  })();
