@@ -874,6 +874,7 @@ function crearTemporada(temporada,index){
             currentSeasonIndex=index;
             currentEpisodeIndex=epIndex;
             updateSelected();
+            programarPrecarga('episode',ep,false);
         });
         item.addEventListener('pointerdown',()=>programarPrecarga('episode',ep,true));
 
