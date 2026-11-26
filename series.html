@@ -479,7 +479,10 @@ async function reproducirConWorker(tipo,registro){
     try{
         const url=await obtenerEnlaceDirecto(tipo,registro);
         if(window.__sharkRecordWorker)window.__sharkRecordWorker(tipo,registro,url);
-        abrirVLC(url);
+        const resumeId=String((registro&&(registro.tmdb_id||registro.id||registro.magnet_id))||'Contenido')+'|'+String(registro&&registro.file_path||'');
+        const resumeItemId="ALLDEBRID-SERIES"+'|'+resumeId;
+        const resumeParams=new URLSearchParams({magnet:String(registro&&registro.magnet_id||''),path:String(registro&&registro.file_path||''),kind:tipo==='episode'?'episode':'movie',item:resumeItemId,title:String(registro&&(registro.title_manual||registro.title||registro.name||registro.titulo||registro.file_name)||'Contenido AllDebrid')});
+        location.href='reproductor.html?'+resumeParams.toString();
     }catch(error){console.error('Error de reproducción:',error);alert(error.message||'No se pudo iniciar la reproducción.');}
     finally{
         reproduccionEnCurso=false;
