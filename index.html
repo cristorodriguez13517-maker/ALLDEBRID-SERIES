@@ -1567,9 +1567,9 @@ iniciar();
  
  window.__sharkRecordWorker=function(tipo,registro){
   const epTitle=document.querySelector('#episode-title,.episode-title');
-  const card=window.selectedMovie||window.selectedSeries||null;
-  const title=(registro&&(registro.title_manual||registro.title||registro.name||registro.titulo||registro.file_name||registro.filename))||(epTitle&&epTitle.textContent)||(card&&card.dataset&&card.dataset.title)||'Contenido AllDebrid';
-  const poster=(registro&&(registro.poster_manual||registro.poster||registro.imagen))||(card&&card.dataset&&card.dataset.poster)||'';
+  const card=(typeof selectedMovie!=='undefined'&&selectedMovie)||(typeof selectedSeries!=='undefined'&&selectedSeries)||window.selectedMovie||window.selectedSeries||null;
+  const title=(registro&&(registro.title_manual||registro.title||registro.name||registro.titulo||registro.file_name||registro.filename))||(epTitle&&epTitle.textContent)||(card&&card.dataset&&card.dataset.title)||(registro&&registro.file_path)||'Contenido AllDebrid';
+  const poster=(registro&&(registro.poster_manual||registro.poster||registro.imagen))||(card&&card.dataset&&card.dataset.poster)||(registro&&registro.poster_url)||'';
   const seriesId=new URLSearchParams(location.search).get('id');
   const isDetail=/series\.html$/i.test(location.pathname)&&!!seriesId;
   const base=location.origin+'/ALLDEBRID-SERIES/';
