@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Reanudando · SHARKTV</title><script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script><style>*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#050505;color:#fff;font-family:Arial,sans-serif}main{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;text-align:center}.brand{font-size:22px;font-weight:900;letter-spacing:2px;margin-bottom:22px}.brand span{color:#e50914}#status{font-size:16px;line-height:1.5;color:#ddd;max-width:440px}.spinner{width:34px;height:34px;border:3px solid #444;border-top-color:#e50914;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:22px}@keyframes spin{to{transform:rotate(360deg)}}button{display:none;margin-top:20px;padding:12px 22px;border:0;border-radius:6px;background:#e50914;color:#fff;font-size:15px;font-weight:bold}</style></head>
+<body><main><div class="brand">SHARK<span>TV</span></div><div class="spinner" id="spinner"></div><div id="status">Buscando el archivo en AllDebrid…</div><button id="retry">Volver a intentar</button></main>
+<script>
+(function(){
+'use strict';
+const p=new URLSearchParams(location.search),magnet=p.get('shark_magnet')||'',file=p.get('shark_path')||'',kind=p.get('shark_kind')||'movie';
+const WORKER_URL='https://alldebrid-vlc.cristorodriguez13517.workers.dev/',SITE_KEY='0x4AAAAAAGK-CFVW1ivlcFRe';
+const status=document.getElementById('status'),spinner=document.getElementById('spinner'),retry=document.getElementById('retry');
+let widget=null,resolveToken=null,rejectToken=null,busy=false;
+function say(t,error){status.textContent=t;spinner.style.display=error?'none':'block';retry.style.display=error?'inline-block':'none'}
+function findFile(x){if(!x||typeof x!=='object')return null;if(String(x.magnet_id||'')===magnet&&String(x.file_path||'')===file)return x;for(const v of Object.values(x)){const f=findFile(v);if(f)return f}return null}
+async function getToken(){
+ const until=Date.now()+15000;while(!window.turnstile&&Date.now()<until)await new Promise(r=>setTimeout(r,100));if(!window.turnstile)throw new Error('No se pudo cargar Cloudflare Turnstile.');
+ let host=document.getElementById('turnstile-host');if(!host){host=document.createElement('div');host.id='turnstile-host';host.style.cssText='position:fixed;left:-10000px;top:-10000px;width:1px;height:1px;overflow:hidden';document.body.appendChild(host)}
+ if(widget===null)widget=window.turnstile.render(host,{sitekey:SITE_KEY,action:'reproducir',execution:'execute',size:'invisible',appearance:'interaction-only',callback:t=>{if(resolveToken){const f=resolveToken;resolveToken=null;rejectToken=null;f(t)}},'error-callback':c=>{if(rejectToken){const f=rejectToken;resolveToken=null;rejectToken=null;f(new Error('Cloudflare rechazó la verificación ('+(c||'error')+').'))}},'unsupported-callback':()=>{if(rejectToken){const f=rejectToken;resolveToken=null;rejectToken=null;f(new Error('Navegador incompatible con Cloudflare.'))}},'timeout-callback':()=>{if(rejectToken){const f=rejectToken;resolveToken=null;rejectToken=null;f(new Error('La verificación de Cloudflare agotó el tiempo.'))}},'expired-callback':()=>{if(rejectToken){const f=rejectToken;resolveToken=null;rejectToken=null;f(new Error('La verificación ha caducado.'))}}});
+ return new Promise((resolve,reject)=>{resolveToken=resolve;rejectToken=reject;window.turnstile.reset(widget);window.turnstile.execute(widget);setTimeout(()=>{if(rejectToken===reject){resolveToken=null;rejectToken=null;reject(new Error('Cloudflare está tardando demasiado.'))}},30000)})
+}
+async function locate(){
+ if(!/^\d+$/.test(magnet)||!file)throw new Error('Este elemento no tiene guardado el identificador de AllDebrid. Reprodúcelo una vez desde el catálogo para registrarlo.');
+ const names=kind==='episode'?['episodios.json','series.json','peliculas.json']:['peliculas.json','series.json','episodios.json'];
+ for(const name of names){try{const r=await fetch('./'+name+'?t='+Date.now(),{cache:'no-store'});if(r.ok){const found=findFile(await r.json());if(found)return found}}catch(e){}}
+ throw new Error('No se encuentra el archivo en los datos actuales de AllDebrid. Puede haberse eliminado o cambiado.')
+}
+async function play(){
+ if(busy)return;busy=true;retry.style.display='none';
+ try{
+  say('Localizando el archivo y preparando VLC…');await locate();
+  say('Verificando con Cloudflare y generando un enlace nuevo…');const token=await getToken();
+  const response=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo:kind,magnet_id:magnet,file_path:file,token})});
+  const result=await response.json().catch(()=>({}));if(!response.ok||!result.url)throw new Error(result.error||'AllDebrid no ha podido generar el enlace de reproducción.');
+  const media=new URL(result.url);if(!['https:','http:'].includes(media.protocol))throw new Error('AllDebrid devolvió un enlace no válido.');
+  say('Abriendo VLC…');window.location.href='intent://'+media.host+media.pathname+media.search+'#Intent;scheme='+media.protocol.replace(':','')+';package=org.videolan.vlc;type=video/*;end';
+ }catch(e){console.error(e);say(e.message||'No se pudo reanudar la reproducción.',true)}
+ finally{busy=false;if(window.turnstile&&widget!==null)window.turnstile.reset(widget)}
+}
+retry.addEventListener('click',play);play();
+})();
+</script></body></html>
