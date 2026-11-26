@@ -479,8 +479,7 @@ async function reproducirConWorker(tipo,registro){
     try{
         const url=await obtenerEnlaceDirecto(tipo,registro);
         if(window.__sharkRecordWorker)window.__sharkRecordWorker(tipo,registro,url);
-        const resumeId=String((registro&&(registro.tmdb_id||registro.id||registro.magnet_id))||'Contenido')+'|'+String(registro&&registro.file_path||'');
-        const resumeItemId="ALLDEBRID-SERIES"+'|        abrirVLC(url);
+        abrirVLC(url);
     }catch(error){console.error('Error de reproducción:',error);alert(error.message||'No se pudo iniciar la reproducción.');}
     finally{
         reproduccionEnCurso=false;
