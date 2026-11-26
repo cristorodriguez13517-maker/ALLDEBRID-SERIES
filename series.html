@@ -1203,6 +1203,11 @@ document.addEventListener('keydown',event=>{
 /* INICIO */
 
 async function iniciar(){
+    const resumeParams=new URLSearchParams(location.search);
+    if(resumeParams.has('shark_magnet')&&resumeParams.has('shark_path')){
+        window.__sharkResumeAllDebrid&&window.__sharkResumeAllDebrid([]);
+        return;
+    }
     if(seriesId){
         await loadSeriesDetail();
     }else{
@@ -1328,10 +1333,10 @@ iniciar();
   const params=new URLSearchParams(location.search);
   const magnet=params.get('shark_magnet'),file=params.get('shark_path');
   if(!magnet||!file||window.__sharkResumeStarted)return;
-  const record=(Array.isArray(items)?items:[]).find(x=>String(x&&x.magnet_id||'')===magnet&&String(x&&x.file_path||'')===file);
-  if(!record){console.warn('No se encontró el episodio AllDebrid para reanudar.');return;}
+  const record=(Array.isArray(items)?items:[]).find(x=>String(x&&x.magnet_id||'')===magnet&&String(x&&x.file_path||'')===file)
+    ||{magnet_id:magnet,file_path:file,title_manual:params.get('shark_title')||''};
   window.__sharkResumeStarted=true;
-  setTimeout(()=>reproducirConWorker(params.get('shark_kind')||'episode',record),500);
+  reproducirConWorker(params.get('shark_kind')||'episode',record);
  };
 
  
