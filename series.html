@@ -1046,6 +1046,7 @@ async function loadSeriesDetail(){
 
         statusEl.hidden=true;
         mostrarTemporada(0);
+        if(window.__sharkResumeAllDebrid)window.__sharkResumeAllDebrid(temporadas.flatMap(t=>t.capitulos||[]));
 
     }catch(error){
         console.error(error);
@@ -1323,6 +1324,16 @@ iniciar();
   }catch(e){console.warn('No se pudo guardar Seguir viendo:',e)}
  }
  window.SHARKTVContinue={save};
+ window.__sharkResumeAllDebrid=function(items){
+  const params=new URLSearchParams(location.search);
+  const magnet=params.get('shark_magnet'),file=params.get('shark_path');
+  if(!magnet||!file||window.__sharkResumeStarted)return;
+  const record=(Array.isArray(items)?items:[]).find(x=>String(x&&x.magnet_id||'')===magnet&&String(x&&x.file_path||'')===file);
+  if(!record){console.warn('No se encontró el episodio AllDebrid para reanudar.');return;}
+  window.__sharkResumeStarted=true;
+  setTimeout(()=>reproducirConWorker(params.get('shark_kind')||'episode',record),500);
+ };
+
  
  
  
