@@ -431,6 +431,33 @@ outline:none!important;box-shadow:none!important
   }
 }
 </style>
+<script id="shark-resume-quiet-mode">
+(function(){
+  const p=new URLSearchParams(location.search);
+  if(p.has('shark_magnet')&&p.has('shark_path')){
+    document.documentElement.classList.add('shark-resume-quiet-mode');
+  }
+})();
+</script>
+<style id="shark-resume-quiet-mode-style">
+html.shark-resume-quiet-mode body > *:not(script):not(style){
+  visibility:hidden!important;
+}
+html.shark-resume-quiet-mode body::after{
+  content:'Preparando reproducción…';
+  position:fixed;
+  inset:0;
+  z-index:2147483647;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:#080b12;
+  color:#fff;
+  font:600 20px/1.4 system-ui,sans-serif;
+  visibility:visible!important;
+}
+</style>
 </head>
 
 <body>
