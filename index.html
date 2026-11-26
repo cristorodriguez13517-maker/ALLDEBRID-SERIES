@@ -551,7 +551,7 @@ async function reproducirConWorker(tipo,registro){
         const response=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo,magnet_id:magnetId,file_path:filePath,token})});
         const result=await response.json().catch(()=>({}));
         if(!response.ok||!result.url) throw new Error(result.error||'No se pudo preparar la reproducción.');
-        if(window.__sharkRecordWorker)window.__sharkRecordWorker(tipo,registro,url);
+        if(window.__sharkRecordWorker)window.__sharkRecordWorker(tipo,registro,result.url);
         abrirVLC(result.url);
     }catch(error){console.error('Error de reproducción:',error);alert(error.message||'No se pudo iniciar la reproducción.');}
     finally{
