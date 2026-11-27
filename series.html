@@ -1308,7 +1308,7 @@ iniciar();
   try{
    const list=read(),id=String(data.id||data.sourceUrl||data.title||Date.now());
    const key=REPO+'|'+id;
-   const item={id:key,title:data.title||'Contenido',poster:data.poster||'',url:data.player==='VLC'?(data.resumeUrl||''):(data.sourceUrl||data.resumeUrl||''),sourceUrl:data.sourceUrl||'',player:data.player||'SmartTube',repo:REPO,kind:data.kind||'movie',magnetId:data.magnetId||'',filePath:data.filePath||'',seriesId:data.seriesId||'',percent:0,updatedAt:Date.now()};
+   const item={id:key,title:data.title||'Contenido',poster:data.poster||'',url:data.player==='VLC'?(data.resumeUrl||''):(data.sourceUrl||data.resumeUrl||''),sourceUrl:data.sourceUrl||'',player:data.player||'SmartTube',repo:REPO,kind:data.kind||'movie',magnetId:data.magnetId||'',filePath:data.filePath||'',seriesId:data.seriesId||'',catalogId:data.catalogId||'',percent:0,updatedAt:Date.now()};
    const next=[item,...list.filter(x=>String(x.id)!==key)].slice(0,80);
    localStorage.setItem(KEY,JSON.stringify(next));
   }catch(e){console.warn('No se pudo guardar Seguir viendo:',e)}
@@ -1337,7 +1337,7 @@ iniciar();
   const base=location.origin+'/ALLDEBRID-SERIES/';
   const resume=isDetail?base+'series.html?id='+encodeURIComponent(seriesId):base;
   const id=(registro&&(registro.tmdb_id||registro.id||registro.magnet_id))||title;
-  save({id:String(id)+'|'+String(registro&&registro.file_path||''),title,poster,sourceUrl:'',player:'VLC',kind:tipo||'movie',resumeUrl:resume,magnetId:registro&&registro.magnet_id||'',filePath:registro&&registro.file_path||'',seriesId:seriesId||((tipo==='series')?String(registro&&(registro.tmdb_id||registro.id)||''):'')});
+  save({id:String(id)+'|'+String(registro&&registro.file_path||''),title,poster,sourceUrl:'',player:'VLC',kind:tipo||'movie',resumeUrl:resume,magnetId:registro&&registro.magnet_id||'',filePath:registro&&registro.file_path||'',seriesId:seriesId||((tipo==='series')?String(registro&&(registro.tmdb_id||registro.id)||''):''),catalogId:card&&card.dataset&&card.dataset.id||''});
  };
  
  })();
