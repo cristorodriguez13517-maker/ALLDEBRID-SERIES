@@ -660,32 +660,7 @@ function qualityOf(s){
 
 /* ABRIR VLC */
 
-function abrirVLC(url){
-    if(!url){
-        alert('Este episodio todavía no tiene enlace de reproducción.');
-        return;
-    }
-
-    try{
-        const media=new URL(url);
-
-        if(media.protocol!=='https:'&&media.protocol!=='http:'){
-            alert('El enlace de reproducción no es válido.');
-            return;
-        }
-
-        const intent=
-            'intent://'+media.host+media.pathname+media.search+
-            '#Intent;scheme='+media.protocol.replace(':','')+
-            ';package=org.videolan.vlc;type=video/*;end';
-
-        window.location.href=intent;
-
-    }catch(error){
-        console.error(error);
-        alert('No se pudo abrir el episodio en VLC.');
-    }
-}
+function abrirVLC(url){if(!url){alert('No hay enlace directo disponible.');return;}try{const u=new URL(url);if(u.protocol!=='https:'&&u.protocol!=='http:')throw new Error('Enlace no válido');const p=new URL('https://cristorodriguez13517-maker.github.io/SHARKTV-PLAYER/');p.searchParams.set('source','alldebrid');p.searchParams.set('url',u.href);p.searchParams.set('title',document.title||'SHARKTV');location.href=p.href;}catch(e){console.error(e);alert('No se pudo abrir SHARKTV PLAYER.');}}
 
 /* CARGAR CATÁLOGO DE SERIES */
 
