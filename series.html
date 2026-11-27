@@ -571,7 +571,6 @@ function abrirVLC(url){
  }catch(e){console.error(e);alert('No se pudo abrir el enlace en VLC. Comprueba que VLC esté instalado.')}
 }
 
-try{const u=new URL(url);if(u.protocol!=='https:'&&u.protocol!=='http:')throw new Error('Enlace no válido');const p=new URL('https://cristorodriguez13517-maker.github.io/SHARKTV-PLAYER/');p.searchParams.set('source','alldebrid');p.searchParams.set('url',u.href);p.searchParams.set('title',document.title||'SHARKTV');location.href=p.href;}catch(e){console.error(e);alert('No se pudo abrir SHARKTV PLAYER.');}}
 
 /* CARGAR CATÁLOGO DE SERIES */
 
