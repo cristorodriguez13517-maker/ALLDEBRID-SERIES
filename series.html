@@ -558,9 +558,20 @@ function qualityOf(s){
     return s.quality_manual||s.quality||'';
 }
 
-/* ABRIR VLC */
+/* ABRIR DIRECTAMENTE EN VLC PARA ANDROID */
+function abrirVLC(url){
+ if(!url){alert('No hay enlace directo disponible.');return}
+ try{
+  const u=new URL(url);
+  if(u.protocol!=='https:'&&u.protocol!=='http:')throw new Error('Enlace no válido');
+  const fallback=encodeURIComponent(u.href);
+  const intent='intent://'+u.host+u.pathname+u.search+'#Intent;scheme='+u.protocol.slice(0,-1)+';package=org.videolan.vlc;type=video/*;S.browser_fallback_url='+fallback+';end';
+  if(/Android/i.test(navigator.userAgent))location.href=intent;
+  else window.open(u.href,'_blank','noopener');
+ }catch(e){console.error(e);alert('No se pudo abrir el enlace en VLC. Comprueba que VLC esté instalado.')}
+}
 
-function abrirVLC(url){if(!url){alert('No hay enlace directo disponible.');return;}try{const u=new URL(url);if(u.protocol!=='https:'&&u.protocol!=='http:')throw new Error('Enlace no válido');const p=new URL('https://cristorodriguez13517-maker.github.io/SHARKTV-PLAYER/');p.searchParams.set('source','alldebrid');p.searchParams.set('url',u.href);p.searchParams.set('title',document.title||'SHARKTV');location.href=p.href;}catch(e){console.error(e);alert('No se pudo abrir SHARKTV PLAYER.');}}
+try{const u=new URL(url);if(u.protocol!=='https:'&&u.protocol!=='http:')throw new Error('Enlace no válido');const p=new URL('https://cristorodriguez13517-maker.github.io/SHARKTV-PLAYER/');p.searchParams.set('source','alldebrid');p.searchParams.set('url',u.href);p.searchParams.set('title',document.title||'SHARKTV');location.href=p.href;}catch(e){console.error(e);alert('No se pudo abrir SHARKTV PLAYER.');}}
 
 /* CARGAR CATÁLOGO DE SERIES */
 
