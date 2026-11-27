@@ -1603,7 +1603,9 @@ iniciar();
   const card=cards.find(el=>String(el.dataset.id||'')===wanted||String(el.dataset.tmdbId||'')===wanted);
   if(card){
    if(typeof window.selectMovie==='function')window.selectMovie(card);
+   else if(typeof window.selectSeries==='function')window.selectSeries(card);
    else if(typeof window.renderMovieHeader==='function')window.renderMovieHeader(card);
+   else if(typeof window.renderSeriesHeader==='function')window.renderSeriesHeader(card);
    card.focus({preventScroll:true});
    card.scrollIntoView({block:'center',behavior:'auto'});
    params.delete('shark_ficha');
