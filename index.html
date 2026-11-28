@@ -567,6 +567,8 @@ async function obtenerTokenTurnstile(){
 
 async function reproducirConWorker(tipo,registro){
     if(reproduccionEnCurso) return;
+    // Reservar la pestaña durante el gesto del usuario; la URL de AllDebrid llega después de la verificación asíncrona.
+    const mpvWindow=window.open('about:blank','_blank');
     const magnetId=String(registro?.magnet_id||'');
     const filePath=String(registro?.file_path||'');
     if(!/^\d+$/.test(magnetId)||!filePath){alert('Este episodio no tiene un archivo disponible en AllDebrid.');return;}
@@ -579,7 +581,7 @@ async function reproducirConWorker(tipo,registro){
         const result=await response.json().catch(()=>({}));
         if(!response.ok||!result.url) throw new Error(result.error||'No se pudo preparar la reproducción.');
         if(window.__sharkRecordWorker)window.__sharkRecordWorker(tipo,registro,result.url);
-        abrirMPV(result.url);
+        abrirMPV(result.url,mpvWindow);
     }catch(error){console.error('Error de reproducción:',error);alert(error.message||'No se pudo iniciar la reproducción.');}
     finally{
         reproduccionEnCurso=false;
@@ -668,16 +670,18 @@ function qualityOf(s){
 }
 
 /* ABRIR DIRECTAMENTE EN MPV-ANDROID */
-function abrirMPV(url){
+function abrirMPV(url,ventana){
  if(!url){alert('No hay enlace directo disponible.');return}
  try{
   const u=new URL(url);
   if(u.protocol!=='https:'&&u.protocol!=='http:')throw new Error('Enlace no válido');
   const fallback=encodeURIComponent(u.href);
   const intent='intent://'+u.host+u.pathname+u.search+'#Intent;scheme='+u.protocol.slice(0,-1)+';package=is.xyz.mpv;type=video/any;S.browser_fallback_url='+fallback+';end';
-  if(/Android/i.test(navigator.userAgent))location.href=intent;
-  else window.open(u.href,'_blank','noopener');
- }catch(e){console.error(e);alert('No se pudo abrir el enlace en mpv. Comprueba que mpv-android esté instalado.')}
+  if(/Android/i.test(navigator.userAgent)){
+   if(ventana&&!ventana.closed)ventana.location.href=intent;
+   else location.href=intent;
+  }else window.open(u.href,'_blank','noopener');
+ }catch(e){if(ventana&&!ventana.closed)ventana.close();console.error(e);alert('No se pudo abrir el enlace en mpv. Comprueba que mpv-android esté instalado.')}
 }
 
 
