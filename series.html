@@ -538,10 +538,11 @@ function backdropOf(s){
 }
 
 function yearOf(s){
-    return s.first_air_date?String(s.first_air_date).slice(0,4):'';
+    return s.year|| (s.first_air_date?String(s.first_air_date).slice(0,4):'');
 }
 
 function genresOf(s){
+    if(s.genre)return s.genre;
     if(Array.isArray(s.genres)){
         return s.genres.map(x=>typeof x==='string'?x:x.name||'')
             .filter(Boolean).join(', ');
@@ -550,7 +551,7 @@ function genresOf(s){
 }
 
 function ageOf(s){
-    let age=s.age_rating_manual||s.age_rating||'';
+    let age=s.age||s.age_rating_manual||s.age_rating||'';
     if(age&&!String(age).endsWith('+'))age=String(age)+'+';
     return age;
 }
@@ -625,7 +626,7 @@ function renderSeries(){
         card.dataset.genres=genresOf(serie);
         card.dataset.age=ageOf(serie);
         card.dataset.quality=(serie.__availableQualities||[]).join(' / ')||qualityOf(serie);
-        card.dataset.seasons=serie.__availableSeasons?(serie.__availableSeasons+' '+(serie.__availableSeasons===1?'temporada':'temporadas')):'';
+        card.dataset.seasons=serie.__availableSeasons?String(serie.__availableSeasons):'';
 
         const img=document.createElement('img');
         img.alt='';
@@ -686,8 +687,9 @@ header.style.backgroundImage=card.dataset.banner
 
     const details=document.createElement('div');
     details.className='details';
-    const seasonLabel=card.dataset.seasons
-        ?card.dataset.seasons+' '+(Number(card.dataset.seasons)===1?'Temporada':'Temporadas')
+    const seasonCount=Number(card.dataset.seasons)||0;
+    const seasonLabel=seasonCount
+        ?seasonCount+' '+(seasonCount===1?'temporada':'temporadas')
         :'';
     details.textContent=[
         card.dataset.year,
