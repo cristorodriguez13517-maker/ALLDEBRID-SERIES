@@ -1015,17 +1015,7 @@ async function loadSeriesDetail(){
         const temporadasDisponibles=Array.isArray(serie.seasons)?serie.seasons:[];
         const calidadesDisponibles=String(serie.quality||'').split('/').map(q=>q.trim()).filter(Boolean);
 
-        const details=document.createElement('div');
-        details.className='details';
-        details.id='series-details';
-        details.textContent=[
-            serie.year||'',
-            temporadasDisponibles.length+' '+(temporadasDisponibles.length===1?'temporada':'temporadas'),
-            serie.genre||'',
-            serie.quality||'',
-            serie.age||''
-        ].filter(Boolean).join(' | ');
-        headerInfo.appendChild(details);
+        /* Los metadatos generales permanecen en series.json, pero no se muestran en la vista de episodios. */
 
         const epTitle=document.createElement('h2');
         epTitle.className='episode-title';
