@@ -1329,13 +1329,16 @@ iniciar();
   const epTitle=document.querySelector('#episode-title,.episode-title');
   const card=(typeof selectedMovie!=='undefined'&&selectedMovie)||(typeof selectedSeries!=='undefined'&&selectedSeries)||window.selectedMovie||window.selectedSeries||null;
   const title=(registro&&(registro.title_manual||registro.title||registro.name||registro.titulo||registro.file_name||registro.filename))||(epTitle&&epTitle.textContent)||(card&&card.dataset&&card.dataset.title)||(registro&&registro.file_path)||'Contenido AllDebrid';
+   const season=tipo==='episode'?Number((seasonRows[currentSeasonIndex]||{}).dataset?.seasonNumber||1):null;
+   const episode=tipo==='episode'?Number((episodeRecords[currentSeasonIndex]||[])[currentEpisodeIndex]?.numero||currentEpisodeIndex+1):null;
+   const episodeLabel=tipo==='episode'?'T'+season+' · E'+String(episode).padStart(2,'0'):'';
   const poster=(registro&&(registro.poster_manual||registro.poster||registro.imagen))||(card&&card.dataset&&card.dataset.poster)||(registro&&registro.poster_url)||'';
   const seriesId=new URLSearchParams(location.search).get('id');
   const isDetail=/series\.html$/i.test(location.pathname)&&!!seriesId;
   const base=location.origin+'/ALLDEBRID-SERIES/';
   const resume=isDetail?base+'series.html?id='+encodeURIComponent(seriesId):base;
   const id=(registro&&(registro.tmdb_id||registro.id||registro.magnet_id))||title;
-  save({id:String(id)+'|'+String(registro&&registro.file_path||''),title,poster,sourceUrl:'',player:'VLC',kind:tipo||'movie',resumeUrl:resume,magnetId:registro&&registro.magnet_id||'',filePath:registro&&registro.file_path||'',seriesId:seriesId||((tipo==='series')?String(registro&&(registro.tmdb_id||registro.id)||''):''),catalogId:card&&card.dataset&&card.dataset.id||''});
+  save({id:String(id)+'|'+String(registro&&registro.file_path||''),title,episodeLabel,season,episode,poster,sourceUrl:'',player:'VLC',kind:tipo||'movie',resumeUrl:resume,magnetId:registro&&registro.magnet_id||'',filePath:registro&&registro.file_path||'',seriesId:seriesId||((tipo==='series')?String(registro&&(registro.tmdb_id||registro.id)||''):''),catalogId:card&&card.dataset&&card.dataset.id||''});
  };
  
  })();
