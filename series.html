@@ -877,13 +877,6 @@ function crearTemporada(temporada,index){
         }
 
         item.appendChild(img);
-        const quality=String(ep.quality_manual||ep.quality||'').trim();
-        if(quality){
-            const qualityBadge=document.createElement('span');
-            qualityBadge.className='episode-quality';
-            qualityBadge.textContent=quality.toUpperCase();
-            item.appendChild(qualityBadge);
-        }
         const duration=ep.duracion??ep.duration??ep.runtime??ep.duracion_minutos??null;
         if(duration!==null&&duration!==undefined&&duration!==''){
             const badge=document.createElement('span');
@@ -1040,6 +1033,37 @@ async function loadSeriesDetail(){
             h.textContent=titleOf(serie);
             headerInfo.appendChild(h);
         }
+
+        const registrosSerie=Array.isArray(episodeData[String(serie.id||serie.tmdb_id)])
+            ?episodeData[String(serie.id||serie.tmdb_id)]:[];
+        const episodiosSubidos=registrosSerie.filter(ep=>
+            ep&&(ep.magnet_id||ep.file_path||ep.file_name||ep.filename)
+        );
+        const temporadasDisponibles=[...new Set(episodiosSubidos
+            .map(ep=>Number(ep.temporada||ep.season||1))
+            .filter(n=>Number.isFinite(n)&&n>0))];
+        const calidadesDisponibles=[...new Set(episodiosSubidos.map(ep=>{
+            const raw=String(ep.quality_manual||ep.quality||'').trim().toUpperCase();
+            if(raw)return raw;
+            const file=String(ep.file_path||ep.file_name||ep.filename||'').toLowerCase();
+            if(/\\b4k\\b|2160p|uhd/.test(file))return '4K';
+            if(/1080p|full[ ._-]?hd|\\bfhd\\b/.test(file))return 'FHD';
+            if(/720p|\\bhd\\b/.test(file))return 'HD';
+            if(/480p|576p|\\bsd\\b/.test(file))return 'SD';
+            return '';
+        }).filter(Boolean))];
+
+        const details=document.createElement('div');
+        details.className='details';
+        details.id='series-details';
+        details.textContent=[
+            yearOf(serie),
+            temporadasDisponibles.length+' '+(temporadasDisponibles.length===1?'temporada':'temporadas'),
+            genresOf(serie),
+            calidadesDisponibles.join(' / ')||qualityOf(serie),
+            ageOf(serie)
+        ].filter(Boolean).join(' | ');
+        headerInfo.appendChild(details);
 
         const epTitle=document.createElement('h2');
         epTitle.className='episode-title';
