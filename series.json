@@ -25,7 +25,8 @@
       1
     ],
     "genre": "Crimen, Drama",
-    "age": "12+"
+    "age": "12+",
+    "temporadas": 1
   },
   {
     "id": 70785,
@@ -57,7 +58,8 @@
       3
     ],
     "genre": "Drama, Familia",
-    "age": "12+"
+    "age": "12+",
+    "temporadas": 3
   },
   {
     "id": 291507,
@@ -85,7 +87,8 @@
       1
     ],
     "genre": "Misterio, Drama",
-    "age": "16+"
+    "age": "16+",
+    "temporadas": 1
   },
   {
     "id": 339697,
@@ -112,6 +115,7 @@
       1
     ],
     "genre": "Drama",
-    "age": ""
+    "age": "",
+    "temporadas": 1
   }
 ]
