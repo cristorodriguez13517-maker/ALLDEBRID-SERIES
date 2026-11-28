@@ -489,8 +489,8 @@ html.shark-resume-quiet-mode body::after{
 'use strict';
 
 /* REPRODUCCION SEGURA: el enlace directo solo se solicita al iniciar */
-const WORKER_URL = 'https://alldebrid-vlc.cristorodriguez13517.workers.dev/';
-const TURNSTILE_SITE_KEY = '0x4AAAAAAGK-CFVW1ivlcFRe';
+const WORKER_URL = 'https://alldebrid-mpv.cristorodriguez13517.workers.dev/';
+const TURNSTILE_SITE_KEY = '0x4AAAAAAGK-CFVW1impvFRe';
 let turnstileWidgetId = null;
 let turnstileResolve = null;
 let turnstileReject = null;
@@ -579,7 +579,7 @@ async function reproducirConWorker(tipo,registro){
         const result=await response.json().catch(()=>({}));
         if(!response.ok||!result.url) throw new Error(result.error||'No se pudo preparar la reproducción.');
         if(window.__sharkRecordWorker)window.__sharkRecordWorker(tipo,registro,result.url);
-        abrirVLC(result.url);
+        abrirMPV(result.url);
     }catch(error){console.error('Error de reproducción:',error);alert(error.message||'No se pudo iniciar la reproducción.');}
     finally{
         reproduccionEnCurso=false;
@@ -667,17 +667,17 @@ function qualityOf(s){
     return s.quality_manual||s.quality||'';
 }
 
-/* ABRIR DIRECTAMENTE EN VLC PARA ANDROID */
-function abrirVLC(url){
+/* ABRIR DIRECTAMENTE EN MPV-ANDROID */
+function abrirMPV(url){
  if(!url){alert('No hay enlace directo disponible.');return}
  try{
   const u=new URL(url);
   if(u.protocol!=='https:'&&u.protocol!=='http:')throw new Error('Enlace no válido');
   const fallback=encodeURIComponent(u.href);
-  const intent='intent://'+u.host+u.pathname+u.search+'#Intent;scheme='+u.protocol.slice(0,-1)+';package=org.videolan.vlc;type=video/*;S.browser_fallback_url='+fallback+';end';
+  const intent='intent://'+u.host+u.pathname+u.search+'#Intent;scheme='+u.protocol.slice(0,-1)+';package=is.xyz.mpv;type=video/any;S.browser_fallback_url='+fallback+';end';
   if(/Android/i.test(navigator.userAgent))location.href=intent;
   else window.open(u.href,'_blank','noopener');
- }catch(e){console.error(e);alert('No se pudo abrir el enlace en VLC. Comprueba que VLC esté instalado.')}
+ }catch(e){console.error(e);alert('No se pudo abrir el enlace en mpv. Comprueba que mpv-android esté instalado.')}
 }
 
 
@@ -856,9 +856,9 @@ function appendVlcSourceIcon(target){
     const ns='http://www.w3.org/2000/svg';
     const icon=document.createElementNS(ns,'svg');
     icon.setAttribute('viewBox','0 0 24 28');
-    icon.setAttribute('class','vlc-source-icon');
+    icon.setAttribute('class','mpv-source-icon');
     icon.setAttribute('role','img');
-    icon.setAttribute('aria-label','VLC');
+    icon.setAttribute('aria-label','MPV');
     const cone=document.createElementNS(ns,'path');
     cone.setAttribute('d','M10 2h4l7 21H3L10 2z');
     cone.setAttribute('fill','#f28c28');
@@ -1583,7 +1583,7 @@ iniciar();
   try{
    const list=read(),id=String(data.id||data.sourceUrl||data.title||Date.now());
    const key=REPO+'|'+id;
-   const item={id:key,title:data.title||'Contenido',poster:data.poster||'',logo:data.logo||'',url:data.player==='VLC'?(data.resumeUrl||''):(data.sourceUrl||data.resumeUrl||''),sourceUrl:data.sourceUrl||'',player:data.player||'SmartTube',repo:REPO,kind:data.kind||'movie',magnetId:data.magnetId||'',filePath:data.filePath||'',seriesId:data.seriesId||'',catalogId:data.catalogId||'',percent:0,updatedAt:Date.now()};
+   const item={id:key,title:data.title||'Contenido',poster:data.poster||'',logo:data.logo||'',url:data.player==='MPV'?(data.resumeUrl||''):(data.sourceUrl||data.resumeUrl||''),sourceUrl:data.sourceUrl||'',player:data.player||'SmartTube',repo:REPO,kind:data.kind||'movie',magnetId:data.magnetId||'',filePath:data.filePath||'',seriesId:data.seriesId||'',catalogId:data.catalogId||'',percent:0,updatedAt:Date.now()};
    const next=[item,...list.filter(x=>String(x.id)!==key)].slice(0,80);
    localStorage.setItem(KEY,JSON.stringify(next));
   }catch(e){console.warn('No se pudo guardar Seguir viendo:',e)}
@@ -1603,7 +1603,7 @@ iniciar();
   const base=location.origin+'/ALLDEBRID-SERIES/';
   const resume=isDetail?base+'series.html?id='+encodeURIComponent(seriesId):base;
   const id=(registro&&(registro.tmdb_id||registro.id||registro.magnet_id))||title;
-  save({id:String(id)+'|'+String(registro&&registro.file_path||''),title,poster,logo,sourceUrl:'',player:'VLC',kind:tipo||'movie',resumeUrl:resume,magnetId:registro&&registro.magnet_id||'',filePath:registro&&registro.file_path||'',seriesId:seriesId||((tipo==='series')?String(registro&&(registro.tmdb_id||registro.id)||''):''),catalogId:card&&card.dataset&&card.dataset.id||''});
+  save({id:String(id)+'|'+String(registro&&registro.file_path||''),title,poster,logo,sourceUrl:'',player:'MPV',kind:tipo||'movie',resumeUrl:resume,magnetId:registro&&registro.magnet_id||'',filePath:registro&&registro.file_path||'',seriesId:seriesId||((tipo==='series')?String(registro&&(registro.tmdb_id||registro.id)||''):''),catalogId:card&&card.dataset&&card.dataset.id||''});
  };
  
  })();
@@ -1921,8 +1921,8 @@ iniciar();
 </style>
 
 <style>
-/* Icono VLC junto a los datos del banner */
-.vlc-source-icon{
+/* Icono MPV junto a los datos del banner */
+.mpv-source-icon{
   display:inline-block!important;
   width:17px!important;
   height:20px!important;
@@ -1932,12 +1932,12 @@ iniciar();
 }
 </style>
 
-<style id="hide-youtube-vlc-banner-badges">
-/* Ocultar distintivos de YouTube y VLC en la información del banner */
+<style id="hide-youtube-mpv-banner-badges">
+/* Ocultar distintivos de YouTube y MPV en la información del banner */
 #info .youtube-source-icon,
-#info .vlc-source-icon,
+#info .mpv-source-icon,
 #header-info .youtube-source-icon,
-#header-info .vlc-source-icon{
+#header-info .mpv-source-icon{
   display:none!important;
 }
 </style>
