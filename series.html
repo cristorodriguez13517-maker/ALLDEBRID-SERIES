@@ -582,6 +582,31 @@ async function loadSeries(){
         if(!Array.isArray(data))throw new Error('series.json no es una lista');
 
         seriesList=data;
+
+        /* Añadir temporadas y calidades reales desde episodios.json */
+        try{
+            const episodeData=await readJson('episodios.json');
+            seriesList.forEach(serie=>{
+                const id=String(serie.id||serie.tmdb_id);
+                const episodios=Array.isArray(episodeData[id])?episodeData[id]:[];
+                const temporadas=[...new Set(episodios.map(ep=>Number(ep.temporada||ep.season||1)).filter(Boolean))];
+                const calidades=[...new Set(episodios.map(ep=>{
+                    const raw=String(ep.quality_manual||ep.quality||'').trim().toUpperCase();
+                    if(raw)return raw;
+                    const file=String(ep.file_path||ep.file_name||ep.filename||'').toLowerCase();
+                    if(/\\b4k\\b|2160p|uhd/.test(file))return '4K';
+                    if(/1080p|full[ ._-]?hd|\\bfhd\\b/.test(file))return 'FHD';
+                    if(/720p|\\bhd\\b/.test(file))return 'HD';
+                    if(/480p|576p|\\bsd\\b/.test(file))return 'SD';
+                    return '';
+                }).filter(Boolean))];
+                serie.__availableSeasons=temporadas.length;
+                serie.__availableQualities=calidades;
+            });
+        }catch(error){
+            console.warn('No se pudieron cargar temporadas/calidades para las carátulas:',error);
+        }
+
         renderSeries();
 
     }catch(error){
@@ -616,7 +641,8 @@ function renderSeries(){
         card.dataset.year=yearOf(serie);
         card.dataset.genres=genresOf(serie);
         card.dataset.age=ageOf(serie);
-        card.dataset.quality=qualityOf(serie);
+        card.dataset.quality=(serie.__availableQualities||[]).join(' / ')||qualityOf(serie);
+        card.dataset.seasons=serie.__availableSeasons?serie.__availableSeasons+' temporadas':'';
 
         const img=document.createElement('img');
         img.alt='';
@@ -680,6 +706,7 @@ header.style.backgroundImage=card.dataset.banner
     details.textContent=[
         card.dataset.year,
         card.dataset.genres,
+        card.dataset.seasons,
         card.dataset.quality,
         card.dataset.age
     ].filter(Boolean).join(' | ');
