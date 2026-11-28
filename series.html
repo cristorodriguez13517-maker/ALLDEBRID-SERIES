@@ -703,10 +703,13 @@ header.style.backgroundImage=card.dataset.banner
 
     const details=document.createElement('div');
     details.className='details';
+    const seasonLabel=card.dataset.seasons
+        ?card.dataset.seasons+' '+(Number(card.dataset.seasons)===1?'Temporada':'Temporadas')
+        :'';
     details.textContent=[
         card.dataset.year,
+        seasonLabel,
         card.dataset.genres,
-        card.dataset.seasons,
         card.dataset.quality,
         card.dataset.age
     ].filter(Boolean).join(' | ');
