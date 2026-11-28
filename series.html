@@ -585,7 +585,7 @@ async function loadSeries(){
 
         /* Temporadas y calidades se leen directamente de series.json */
         seriesList.forEach(serie=>{
-            const temporadas=Array.isArray(serie.available_seasons)?serie.available_seasons:[];
+            const temporadas=Array.isArray(serie.seasons)?serie.seasons:[];
             serie.__availableSeasons=temporadas.length;
             serie.__availableQualities=String(serie.quality||'').split('/').map(q=>q.trim()).filter(Boolean);
         });
@@ -1012,18 +1012,18 @@ async function loadSeriesDetail(){
             headerInfo.appendChild(h);
         }
 
-        const temporadasDisponibles=Array.isArray(serie.available_seasons)?serie.available_seasons:[];
+        const temporadasDisponibles=Array.isArray(serie.seasons)?serie.seasons:[];
         const calidadesDisponibles=String(serie.quality||'').split('/').map(q=>q.trim()).filter(Boolean);
 
         const details=document.createElement('div');
         details.className='details';
         details.id='series-details';
         details.textContent=[
-            yearOf(serie),
+            serie.year||'',
             temporadasDisponibles.length+' '+(temporadasDisponibles.length===1?'temporada':'temporadas'),
-            genresOf(serie),
-            calidadesDisponibles.join(' / ')||qualityOf(serie),
-            ageOf(serie)
+            serie.genre||'',
+            serie.quality||'',
+            serie.age||''
         ].filter(Boolean).join(' | ');
         headerInfo.appendChild(details);
 
