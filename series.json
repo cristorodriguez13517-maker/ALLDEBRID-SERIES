@@ -19,7 +19,13 @@
     "logo_selection_version": 3,
     "available_seasons": [
       1
-    ]
+    ],
+    "year": "2026",
+    "seasons": [
+      1
+    ],
+    "genre": "Crimen, Drama",
+    "age": "12+"
   },
   {
     "id": 70785,
@@ -43,7 +49,15 @@
       1,
       2,
       3
-    ]
+    ],
+    "year": "2017",
+    "seasons": [
+      1,
+      2,
+      3
+    ],
+    "genre": "Drama, Familia",
+    "age": "12+"
   },
   {
     "id": 291507,
@@ -65,7 +79,13 @@
     "logo_selection_version": 3,
     "available_seasons": [
       1
-    ]
+    ],
+    "year": "2026",
+    "seasons": [
+      1
+    ],
+    "genre": "Misterio, Drama",
+    "age": "16+"
   },
   {
     "id": 339697,
@@ -86,6 +106,12 @@
     "logo_selection_version": 3,
     "available_seasons": [
       1
-    ]
+    ],
+    "year": "2026",
+    "seasons": [
+      1
+    ],
+    "genre": "Drama",
+    "age": ""
   }
 ]
