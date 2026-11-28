@@ -932,9 +932,9 @@ function updateSelected(){
 
 function mostrarTemporada(index){
     if(index<0||index>=seasonRows.length)return;
-    const showAllOnPhone=window.matchMedia('(orientation: portrait) and (pointer: coarse)').matches;
-    seasonRows.forEach((row,i)=>{
-        row.style.setProperty('display',showAllOnPhone?'block':(i===index?'block':'none'),'important');
+    /* Mostrar todas las temporadas a la vez, igual que una ficha completa de serie. */
+    seasonRows.forEach(row=>{
+        row.style.setProperty('display','block','important');
         row.style.setProperty('visibility','visible','important');
     });
     currentSeasonIndex=index;
@@ -942,7 +942,7 @@ function mostrarTemporada(index){
     updateSelected();
     const activeSeason=seasonRows[index];
     if(activeSeason){
-        activeSeason.scrollIntoView({block:'nearest',inline:'nearest',behavior:showAllOnPhone?'smooth':'auto'});
+        activeSeason.scrollIntoView({block:'nearest',inline:'nearest',behavior:'auto'});
     }
 }
 
