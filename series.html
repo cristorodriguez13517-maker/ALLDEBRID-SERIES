@@ -975,10 +975,12 @@ function updateSelected(){
 
 function mostrarTemporada(index){
     if(index<0||index>=seasonRows.length)return;
-    /* Mostrar todas las temporadas a la vez, igual que una ficha completa de serie. */
-    seasonRows.forEach(row=>{
-        row.style.setProperty('display','block','important');
-        row.style.setProperty('visibility','visible','important');
+    const modoUnaTemporada=window.matchMedia('(pointer:coarse)').matches||window.innerWidth<=1024;
+    seasonRows.forEach((row,i)=>{
+        const visible=!modoUnaTemporada||i===index;
+        row.classList.toggle('active-season',visible&&i===index);
+        row.style.setProperty('display',visible?'block':'none','important');
+        row.style.setProperty('visibility',visible?'visible':'hidden','important');
     });
     currentSeasonIndex=index;
     currentEpisodeIndex=0;
@@ -1386,5 +1388,14 @@ iniciar();
  
  })();
 </script>
+
+<style id="sharktv-tv-tablet-single-season">
+/* En TV y tablet se presenta una sola temporada; arriba/abajo cambia la temporada activa. */
+@media (pointer:coarse), (max-width:1024px){
+ #series-container .season-row{display:none!important;visibility:hidden!important;margin-bottom:24px!important;}
+ #series-container .season-row.active-season{display:block!important;visibility:visible!important;}
+ #series-container .episodes-list{width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;}
+}
+</style>
 </body>
 </html>
