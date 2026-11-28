@@ -594,10 +594,10 @@ async function loadSeries(){
                     const raw=String(ep.quality_manual||ep.quality||'').trim().toUpperCase();
                     if(raw)return raw;
                     const file=String(ep.file_path||ep.file_name||ep.filename||'').toLowerCase();
-                    if(/\\b4k\\b|2160p|uhd/.test(file))return '4K';
-                    if(/1080p|full[ ._-]?hd|\\bfhd\\b/.test(file))return 'FHD';
-                    if(/720p|\\bhd\\b/.test(file))return 'HD';
-                    if(/480p|576p|\\bsd\\b/.test(file))return 'SD';
+                    if(/\b4k\b|2160p|uhd/.test(file))return '4K';
+                    if(/1080p|full[ ._-]?hd|\bfhd\b/.test(file))return 'FHD';
+                    if(/720p|\bhd\b/.test(file))return 'HD';
+                    if(/480p|576p|\bsd\b/.test(file))return 'SD';
                     return '';
                 }).filter(Boolean))];
                 serie.__availableSeasons=temporadas.length;
@@ -847,10 +847,10 @@ function crearTemporada(temporada,index){
         const raw=String(ep.quality_manual||ep.quality||'').trim();
         if(raw)return raw.toUpperCase();
         const file=String(ep.file_path||ep.file_name||ep.filename||'').toLowerCase();
-        if(/\\b4k\\b|2160p|uhd/.test(file))return '4K';
-        if(/1080p|full[ ._-]?hd|\\bfhd\\b/.test(file))return 'FHD';
-        if(/720p|\\bhd\\b/.test(file))return 'HD';
-        if(/480p|576p|\\bsd\\b/.test(file))return 'SD';
+        if(/\b4k\b|2160p|uhd/.test(file))return '4K';
+        if(/1080p|full[ ._-]?hd|\bfhd\b/.test(file))return 'FHD';
+        if(/720p|\bhd\b/.test(file))return 'HD';
+        if(/480p|576p|\bsd\b/.test(file))return 'SD';
         return '';
     }).filter(Boolean))];
     title.textContent='Temporada '+temporada.numero+
