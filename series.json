@@ -14,9 +14,12 @@
     ],
     "age_rating": "12+",
     "number_of_seasons": 1,
-    "quality": "",
+    "quality": "FHD",
     "added_at": "2026-11-20T21:30:17+00:00",
-    "logo_selection_version": 3
+    "logo_selection_version": 3,
+    "available_seasons": [
+      1
+    ]
   },
   {
     "id": 70785,
@@ -33,9 +36,14 @@
     ],
     "age_rating": "12+",
     "number_of_seasons": 3,
-    "quality": "",
+    "quality": "FHD",
     "added_at": "2026-11-18T17:25:18+00:00",
-    "logo_selection_version": 3
+    "logo_selection_version": 3,
+    "available_seasons": [
+      1,
+      2,
+      3
+    ]
   },
   {
     "id": 291507,
@@ -52,9 +60,12 @@
     ],
     "age_rating": "16+",
     "number_of_seasons": 1,
-    "quality": "",
+    "quality": "FHD",
     "added_at": "2026-11-17T15:31:43+00:00",
-    "logo_selection_version": 3
+    "logo_selection_version": 3,
+    "available_seasons": [
+      1
+    ]
   },
   {
     "id": 339697,
@@ -70,8 +81,11 @@
     ],
     "age_rating": "",
     "number_of_seasons": 1,
-    "quality": "",
+    "quality": "FHD",
     "added_at": "2026-11-07T01:16:10+00:00",
-    "logo_selection_version": 3
+    "logo_selection_version": 3,
+    "available_seasons": [
+      1
+    ]
   }
 ]
