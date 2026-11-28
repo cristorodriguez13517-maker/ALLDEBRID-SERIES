@@ -54,6 +54,7 @@ border-radius:4px;background:transparent;text-decoration:none;
 outline:none!important;box-shadow:none!important
 }
 .episode-thumb img{width:100%;height:124px;object-fit:cover;display:block}
+.episode-quality{position:absolute;left:8px;top:8px;z-index:2;padding:4px 7px;border-radius:4px;background:rgba(0,0,0,.82);color:#fff;font-size:12px;font-weight:700;line-height:1;pointer-events:none;text-shadow:0 1px 2px #000}
 .episode-duration{position:absolute;right:8px;bottom:8px;z-index:2;padding:4px 7px;border-radius:4px;background:rgba(0,0,0,.78);color:#fff;font-size:12px;font-weight:700;line-height:1;pointer-events:none;text-shadow:0 1px 2px #000}
 .episode-thumb.selected,.episode-thumb:focus{border-color:#e50914!important}
 .episode-thumb img.placeholder{object-fit:contain;background:#171717}
@@ -813,13 +814,23 @@ function crearTemporada(temporada,index){
 
     const title=document.createElement('div');
     title.className='season-title';
-    title.textContent='Temporada '+temporada.numero;
+    const eps=(temporada.capitulos||[]).slice()
+        .sort((a,b)=>Number(a.numero)-Number(b.numero));
+    const seasonQualities=[...new Set(eps.map(ep=>{
+        const raw=String(ep.quality_manual||ep.quality||'').trim();
+        if(raw)return raw.toUpperCase();
+        const file=String(ep.file_path||ep.file_name||ep.filename||'').toLowerCase();
+        if(/\\b4k\\b|2160p|uhd/.test(file))return '4K';
+        if(/1080p|full[ ._-]?hd|\\bfhd\\b/.test(file))return 'FHD';
+        if(/720p|\\bhd\\b/.test(file))return 'HD';
+        if(/480p|576p|\\bsd\\b/.test(file))return 'SD';
+        return '';
+    }).filter(Boolean))];
+    title.textContent='Temporada '+temporada.numero+
+        (seasonQualities.length?' · '+seasonQualities.join(' / '):'');
 
     const list=document.createElement('div');
     list.className='episodes-list';
-
-    const eps=(temporada.capitulos||[]).slice()
-        .sort((a,b)=>Number(a.numero)-Number(b.numero));
 
     eps.forEach((ep,epIndex)=>{
         const item=document.createElement('a');
@@ -841,7 +852,15 @@ function crearTemporada(temporada,index){
             img.classList.add('placeholder');
         }
 
-        item.appendChild(img);const duration=ep.duracion??ep.duration??ep.runtime??ep.duracion_minutos??null;
+        item.appendChild(img);
+        const quality=String(ep.quality_manual||ep.quality||'').trim();
+        if(quality){
+            const qualityBadge=document.createElement('span');
+            qualityBadge.className='episode-quality';
+            qualityBadge.textContent=quality.toUpperCase();
+            item.appendChild(qualityBadge);
+        }
+        const duration=ep.duracion??ep.duration??ep.runtime??ep.duracion_minutos??null;
         if(duration!==null&&duration!==undefined&&duration!==''){
             const badge=document.createElement('span');
             badge.className='episode-duration';
