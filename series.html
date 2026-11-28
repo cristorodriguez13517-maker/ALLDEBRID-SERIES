@@ -583,34 +583,12 @@ async function loadSeries(){
 
         seriesList=data;
 
-        /* Calcular temporadas y calidades solo con episodios que constan como subidos a AllDebrid */
-        try{
-            const episodeData=await readJson('episodios.json');
-            seriesList.forEach(serie=>{
-                const id=String(serie.id||serie.tmdb_id);
-                const registros=Array.isArray(episodeData[id])?episodeData[id]:[];
-                const episodiosSubidos=registros.filter(ep=>
-                    ep && (ep.magnet_id || ep.file_path || ep.file_name || ep.filename)
-                );
-                const temporadas=[...new Set(episodiosSubidos
-                    .map(ep=>Number(ep.temporada||ep.season||1))
-                    .filter(n=>Number.isFinite(n)&&n>0))];
-                const calidades=[...new Set(episodiosSubidos.map(ep=>{
-                    const raw=String(ep.quality_manual||ep.quality||'').trim().toUpperCase();
-                    if(raw)return raw;
-                    const file=String(ep.file_path||ep.file_name||ep.filename||'').toLowerCase();
-                    if(/\b4k\b|2160p|uhd/.test(file))return '4K';
-                    if(/1080p|full[ ._-]?hd|\bfhd\b/.test(file))return 'FHD';
-                    if(/720p|\bhd\b/.test(file))return 'HD';
-                    if(/480p|576p|\bsd\b/.test(file))return 'SD';
-                    return '';
-                }).filter(Boolean))];
-                serie.__availableSeasons=temporadas.length;
-                serie.__availableQualities=calidades;
-            });
-        }catch(error){
-            console.warn('No se pudieron cargar temporadas/calidades disponibles de AllDebrid:',error);
-        }
+        /* Temporadas y calidades se leen directamente de series.json */
+        seriesList.forEach(serie=>{
+            const temporadas=Array.isArray(serie.available_seasons)?serie.available_seasons:[];
+            serie.__availableSeasons=temporadas.length;
+            serie.__availableQualities=String(serie.quality||'').split('/').map(q=>q.trim()).filter(Boolean);
+        });
 
         renderSeries();
 
@@ -1034,24 +1012,8 @@ async function loadSeriesDetail(){
             headerInfo.appendChild(h);
         }
 
-        const registrosSerie=Array.isArray(episodeData[String(serie.id||serie.tmdb_id)])
-            ?episodeData[String(serie.id||serie.tmdb_id)]:[];
-        const episodiosSubidos=registrosSerie.filter(ep=>
-            ep&&(ep.magnet_id||ep.file_path||ep.file_name||ep.filename)
-        );
-        const temporadasDisponibles=[...new Set(episodiosSubidos
-            .map(ep=>Number(ep.temporada||ep.season||1))
-            .filter(n=>Number.isFinite(n)&&n>0))];
-        const calidadesDisponibles=[...new Set(episodiosSubidos.map(ep=>{
-            const raw=String(ep.quality_manual||ep.quality||'').trim().toUpperCase();
-            if(raw)return raw;
-            const file=String(ep.file_path||ep.file_name||ep.filename||'').toLowerCase();
-            if(/\\b4k\\b|2160p|uhd/.test(file))return '4K';
-            if(/1080p|full[ ._-]?hd|\\bfhd\\b/.test(file))return 'FHD';
-            if(/720p|\\bhd\\b/.test(file))return 'HD';
-            if(/480p|576p|\\bsd\\b/.test(file))return 'SD';
-            return '';
-        }).filter(Boolean))];
+        const temporadasDisponibles=Array.isArray(serie.available_seasons)?serie.available_seasons:[];
+        const calidadesDisponibles=String(serie.quality||'').split('/').map(q=>q.trim()).filter(Boolean);
 
         const details=document.createElement('div');
         details.className='details';
