@@ -583,14 +583,19 @@ async function loadSeries(){
 
         seriesList=data;
 
-        /* Añadir temporadas y calidades reales desde episodios.json */
+        /* Calcular temporadas y calidades solo con episodios que constan como subidos a AllDebrid */
         try{
             const episodeData=await readJson('episodios.json');
             seriesList.forEach(serie=>{
                 const id=String(serie.id||serie.tmdb_id);
-                const episodios=Array.isArray(episodeData[id])?episodeData[id]:[];
-                const temporadas=[...new Set(episodios.map(ep=>Number(ep.temporada||ep.season||1)).filter(Boolean))];
-                const calidades=[...new Set(episodios.map(ep=>{
+                const registros=Array.isArray(episodeData[id])?episodeData[id]:[];
+                const episodiosSubidos=registros.filter(ep=>
+                    ep && (ep.magnet_id || ep.file_path || ep.file_name || ep.filename)
+                );
+                const temporadas=[...new Set(episodiosSubidos
+                    .map(ep=>Number(ep.temporada||ep.season||1))
+                    .filter(n=>Number.isFinite(n)&&n>0))];
+                const calidades=[...new Set(episodiosSubidos.map(ep=>{
                     const raw=String(ep.quality_manual||ep.quality||'').trim().toUpperCase();
                     if(raw)return raw;
                     const file=String(ep.file_path||ep.file_name||ep.filename||'').toLowerCase();
@@ -604,7 +609,7 @@ async function loadSeries(){
                 serie.__availableQualities=calidades;
             });
         }catch(error){
-            console.warn('No se pudieron cargar temporadas/calidades para las carátulas:',error);
+            console.warn('No se pudieron cargar temporadas/calidades disponibles de AllDebrid:',error);
         }
 
         renderSeries();
@@ -642,7 +647,7 @@ function renderSeries(){
         card.dataset.genres=genresOf(serie);
         card.dataset.age=ageOf(serie);
         card.dataset.quality=(serie.__availableQualities||[]).join(' / ')||qualityOf(serie);
-        card.dataset.seasons=serie.__availableSeasons?serie.__availableSeasons+' temporadas':'';
+        card.dataset.seasons=serie.__availableSeasons?(serie.__availableSeasons+' '+(serie.__availableSeasons===1?'temporada':'temporadas')):'';
 
         const img=document.createElement('img');
         img.alt='';
@@ -846,18 +851,7 @@ function crearTemporada(temporada,index){
     title.className='season-title';
     const eps=(temporada.capitulos||[]).slice()
         .sort((a,b)=>Number(a.numero)-Number(b.numero));
-    const seasonQualities=[...new Set(eps.map(ep=>{
-        const raw=String(ep.quality_manual||ep.quality||'').trim();
-        if(raw)return raw.toUpperCase();
-        const file=String(ep.file_path||ep.file_name||ep.filename||'').toLowerCase();
-        if(/\b4k\b|2160p|uhd/.test(file))return '4K';
-        if(/1080p|full[ ._-]?hd|\bfhd\b/.test(file))return 'FHD';
-        if(/720p|\bhd\b/.test(file))return 'HD';
-        if(/480p|576p|\bsd\b/.test(file))return 'SD';
-        return '';
-    }).filter(Boolean))];
-    title.textContent='Temporada '+temporada.numero+
-        (seasonQualities.length?' · '+seasonQualities.join(' / '):'');
+    title.textContent='Temporada '+temporada.numero;
 
     const list=document.createElement('div');
     list.className='episodes-list';
